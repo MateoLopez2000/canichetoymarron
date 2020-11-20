@@ -32,7 +32,8 @@ export class MapsPage implements OnInit {
    }  
   
   ngOnInit() {
-    this.loadMap();    
+    this.loadMap(); 
+    this.onSubmit();   
   }
 
   loadMap() {
@@ -63,7 +64,7 @@ export class MapsPage implements OnInit {
      let long = geposition.coords.longitude.toString();
 
     // this.auth.register("UPB", this.lat, this.long).then(auth => {    
-    this.auth.update_location("UPB", "-17.398797064290626", "-66.21835613799746").then(auth => {
+    this.auth.set_location("UPB", "-17.398797064290626", "-66.21835613799746").then(auth => {
       console.log(auth);
     }).catch(err => console.log(err));
   });
