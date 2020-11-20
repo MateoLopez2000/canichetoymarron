@@ -1,49 +1,71 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
 import { NavController } from '@ionic/angular';
 import { GoogleMaps, MarkerOptions } from '@ionic-native/google-maps';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
 import * as firebase from 'firebase';
+import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
+import { AuthService } from "../services/auth.service";
+
+declare var google;
 
 @Component({
   selector: 'app-maps',
   templateUrl: './maps.page.html',
   styleUrls: ['./maps.page.scss'],
 })
-export class MapsPage  {
-  lat:number
-  lon:number
-  total:string
+export class MapsPage implements OnInit {
+  map: any;
+  lat: string;
+  long: string;  
+  location: any;
 
   constructor(
+    private geolocation: Geolocation,
+    private zone: NgZone,
     public navCtrl: NavController,
-    public geolocation: Geolocation,
     private googleMaps: GoogleMaps,  
-    private db: AngularFirestore
-   ) {
-    this.getGeolocation();
-    }
-
-    async getGeolocation() {
-      const  res = await this.geolocation.getCurrentPosition();
-      const  position = {
-        lat: res.coords.latitude,
-        lng: res.coords.longitude
-      };
-
-      const mapElement: HTMLElement = document.getElementById('map');
-      const map =  GoogleMaps.create(mapElement);
-      console.log(mapElement);
+    private database: AngularFirestore,
+    private nativeGeocoder: NativeGeocoder,
+    public auth: AuthService
+  ) {
+   }  
   
-    /*getGeolocation(){
-      this.geolocation.getCurrentPosition().then((geoposition: Geoposition)=>{
-        this.lat = geoposition.coords.latitude;
-        this.lon = geoposition.coords.longitude;
-      });
-      console.log("Latitud " + this.geolocation);
-*/
-    }
+  ngOnInit() {
+    this.loadMap();    
+  }
 
+  loadMap() {
+    this.geolocation.getCurrentPosition().then((resp) => {
+      let latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
+      
+      let mapOptions = {
+        center: latLng,
+        zoom: 15,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+      } 
+  
+      this.map = new google.maps.Map(document.getElementById('map'), mapOptions); 
+      
+      this.map.addListener('tilesloaded', () => {
+        this.lat = this.map.center.lat()
+        this.long = this.map.center.lng()
+      }); 
+    }).catch((error) => {
+      console.log('Error getting location', error);
+    });
+    // alert('latitud' +this.lat+', longitud'+this.long )
+  }
 
+  onSubmit(){
+    this.geolocation.getCurrentPosition().then((geposition:Geoposition) =>{
+     let lat = geposition.coords.latitude.toString();
+     let long = geposition.coords.longitude.toString();
+
+    // this.auth.register("UPB", this.lat, this.long).then(auth => {    
+    this.auth.update_location("UPB", "-17.398797064290626", "-66.21835613799746").then(auth => {
+      console.log(auth);
+    }).catch(err => console.log(err));
+  });
+  }
 }
