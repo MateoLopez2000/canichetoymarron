@@ -7,20 +7,35 @@
 </ion-header>
 
 <ion-content>
+  <form>
+    <ion-item lines="full">
+      <ion-label position="floating">Nombre Sucursal</ion-label>
+      <ion-input id="sucursal_name" class="input" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">Dirección</ion-label>
+      <ion-input id="direction" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">Zona</ion-label>
+      <ion-input id="zone" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-input id="description" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-row>
+      <ion-col>
+        <ion-button id="registerButton" type="submit" color="secondary" expand="block" (click)="registerSucursal()">Registrar Sucursal</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+  <h5>Elija la ubicación en el mapa:</h5>
   <div id="map"></div>
-  <ion-slides (ionSlideDidChange)="onSlideDidChange()">
-    <ion-slide *ngFor="let marker of markers">
-      <ion-card>
-        <ion-item>
-          <ion-thumbnail slot="start">
-            <img [src]="marker.image">
-          </ion-thumbnail>
-          <ion-label class="ion-text-wrap">
-            <h2>{{ marker.title }}</h2>
-            <p>{{ marker.text }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-card>
-    </ion-slide>
-  </ion-slides>
+  <div style="display:none">Latitud: {{lat}}</div>
+  <div style="display:none">Longitud: {{long}}</div>
 </ion-content>
