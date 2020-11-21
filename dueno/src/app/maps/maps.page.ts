@@ -1,11 +1,12 @@
 import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
-import { NavController } from '@ionic/angular';
+import { IonSlides, NavController, LoadingController } from '@ionic/angular';
 import { GoogleMaps, MarkerOptions } from '@ionic-native/google-maps';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import * as firebase from 'firebase';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
+import { FirestoreService } from '../services/data/firestore.service';
 
 declare var google;
 
@@ -15,27 +16,37 @@ declare var google;
   styleUrls: ['./maps.page.scss'],
 })
 export class MapsPage implements OnInit {
-  map: any;
-  lat: string;
-  long: string;  
-  location: any;
- 
+  
+  @ViewChild(IonSlides) slides: IonSlides;
+  
+  map : any;
+  infoWindow : any;
+  lat : string;
+  long : string;  
+  location : any;
+  markerObj : any;
+  markers: MarkerOptions[] = [ ];
+  
   constructor(
     private geolocation: Geolocation,
     public zone: NgZone,
     public navCtrl: NavController,
     private googleMaps: GoogleMaps,  
     private database: AngularFirestore,
-    private nativeGeocoder: NativeGeocoder
-
+    private nativeGeocoder: NativeGeocoder,
+    private firestoreService: FirestoreService,
+    private loadingCtrl: LoadingController
   ) {
+    this.infoWindow = new google.maps.InfoWindow();
    }  
   
   ngOnInit() {
     this.loadMap();    
   }
 
-  loadMap() {
+  async loadMap() {
+    const loading = await this.loadingCtrl.create();
+    await loading.present();
     this.geolocation.getCurrentPosition().then((resp) => {
       let latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
       
@@ -44,25 +55,69 @@ export class MapsPage implements OnInit {
         zoom: 15,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
       } 
-  
-      // let markerOptions: MarkerOptions = {
-        // position: latLng,
-        // title: 'Posición Actual',
-        // icon: "/location.svg"
-      //  };
 
       this.map = new google.maps.Map(document.getElementById('map'), mapOptions); 
       
       this.map.addListener('tilesloaded', () => {
-        this.lat = this.map.center.lat()
-        this.long = this.map.center.lng()
-      }); 
+        //this.lat = this.map.center.lat()
+        //this.long = this.map.center.lng()
+         loading.dismiss();
+         this.loadMarkers();
+        //this.getLocations();
+      });
+      google.maps.event
+      .addListenerOnce(this.map, 'idle', () => {
+        loading.dismiss();
+      });
     }).catch((error) => {
       console.log('Error getting location', error);
     });
-
-    // alert('latitud' +this.lat+', longitud'+this.long )
-
+    
   }
-  // latitud-17.398797064290626, longitud-66.21835613799746
+
+  addMaker(itemMarker: MarkerOptions) {
+    const marker = new google.maps.Marker({
+      position: { lat: itemMarker.position.lat, lng: itemMarker.position.lng },
+      map: this.map,
+      title: itemMarker.title
+    });
+    return marker;
+  }
+
+  loadMarkers(){
+    this.getLocations();
+    this.markers.forEach(marker => {
+      const markerObj = this.addMaker(marker);
+      marker.markerObj = markerObj;
+    });
+  }
+
+  async onSlideDidChange() {
+    const currentSlide = await this.slides.getActiveIndex();
+    const marker = this.markers[currentSlide];
+    this.map.panTo({lat: marker.lat, lng: marker.lng});
+
+    const markerObj = marker.markerObj;
+    this.infoWindow.setContent(marker.title);
+    this.infoWindow.open(this.map, markerObj);
+  } 
+
+  getLocations(){
+    this.firestoreService.getData('sucursales').subscribe((sucursalesArray) => {
+      this.markers = [];
+      sucursalesArray.forEach((sucursal : any) => {
+        this.markers.push({
+          position : sucursal.position,
+          image : sucursal.image,
+          title :sucursal.title,
+          text : sucursal.text
+        });
+      })
+    });
+
+    this.markers.forEach(marker => {
+      console.log("Marker: " + marker.position.lat + " , " + marker.position.lng);
+    })
+  }
+
 }
