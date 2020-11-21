@@ -9,6 +9,7 @@ import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@io
 import { FirestoreService } from '../services/data/firestore.service';
 
 declare var google;
+let uid = 'SUCURSAL TEST';
 
 @Component({
   selector: 'app-maps',
@@ -26,7 +27,7 @@ export class MapsPage implements OnInit {
   location : any;
   markerObj : any;
   markers: MarkerOptions[] = [ ];
-  
+
   constructor(
     private geolocation: Geolocation,
     public zone: NgZone,
@@ -59,15 +60,20 @@ export class MapsPage implements OnInit {
       this.map = new google.maps.Map(document.getElementById('map'), mapOptions); 
       
       this.map.addListener('tilesloaded', () => {
-        //this.lat = this.map.center.lat()
-        //this.long = this.map.center.lng()
+        this.lat = this.map.center.lat()
+        this.long = this.map.center.lng()
          loading.dismiss();
          this.loadMarkers();
-        //this.getLocations();
-      });
-      google.maps.event
-      .addListenerOnce(this.map, 'idle', () => {
-        loading.dismiss();
+         //ONLY TEST
+         this.addLocation({
+              position : {
+                lat : -17.3781776839617, 
+                lng : -66.17941421120584
+              },
+              image : 'https://fairmonthomes.com.au/images/facades_2019/TS13_A.jpg?Action=thumbnail&Width=1280&algorithm=fill_proportional',
+              title : 'Home',
+              text : 'Tocopilla y Jesus Aguayo'
+            },uid);
       });
     }).catch((error) => {
       console.log('Error getting location', error);
@@ -95,7 +101,7 @@ export class MapsPage implements OnInit {
   async onSlideDidChange() {
     const currentSlide = await this.slides.getActiveIndex();
     const marker = this.markers[currentSlide];
-    this.map.panTo({lat: marker.lat, lng: marker.lng});
+    this.map.panTo({lat: marker.position.lat, lng: marker.position.lng});
 
     const markerObj = marker.markerObj;
     this.infoWindow.setContent(marker.title);
@@ -120,4 +126,11 @@ export class MapsPage implements OnInit {
     })
   }
 
+  addLocation(sucursal : MarkerOptions, uid : any){
+    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.image, sucursal.text);
+  }
+S
+  removeLocation(sucursalId){
+    this.firestoreService.deleteData(sucursalId);
+  }
 }
