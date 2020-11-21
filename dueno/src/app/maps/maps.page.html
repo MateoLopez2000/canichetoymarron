@@ -7,8 +7,36 @@
 </ion-header>
 
 <ion-content>
+  <form>
+    <ion-item lines="full">
+      <ion-label position="floating">Nombre Sucursal</ion-label>
+      <ion-input class="input" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">Dirección</ion-label>
+      <ion-input type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">Zona</ion-label>
+      <ion-input type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-input type="text" required></ion-input>
+    </ion-item>
+
+    <ion-row>
+      <ion-col>
+        <ion-button type="submit" color="secondary" expand="block">Registrar Sucursal</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+  <h5>Elija la ubicación en el mapa:</h5>
   <div id="map"></div>
   <!-- <ion-icon name="location" size="large" color=""></ion-icon>       -->
-  <div>Latitud: {{lat}}</div>
-  <div>Longitud: {{long}}</div>
+  <div style="display:none">Latitud: {{lat}}</div>
+  <div style="display:none">Longitud: {{long}}</div>
 </ion-content>
