@@ -62,7 +62,7 @@ export class SucursalesPage implements OnInit {
       this.map.addListener('tilesloaded', () => {
         this.lat = this.map.center.lat()
         this.long = this.map.center.lng()
-
+        
          this.loadMarkers();
          
       });
@@ -110,7 +110,7 @@ export class SucursalesPage implements OnInit {
         });
       })
     });
-
+    
     this.markers.forEach(marker => {
       console.log("Marker: " + marker.position.lat + " , " + marker.position.lng);
     })
