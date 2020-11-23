@@ -10,17 +10,17 @@
   <form>
     <ion-item lines="full" class="item">
       <ion-label position="floating" class="label">Nombre Sucursal</ion-label>
-      <ion-input id="sucursal_name" class="ioninput" type="text" required></ion-input>
+      <ion-input [(ngModel)]="sucursal_name" class="ioninput" type="text" required [ngModelOptions]="{standalone: true}"></ion-input>
     </ion-item>
 
     <ion-item lines="full" class="item">
       <ion-label position="floating" class="label">Dirección</ion-label>
-      <ion-input id="direction" class="ioninput" type="text" required></ion-input>
+      <ion-input [(ngModel)]="direction" class="ioninput" type="text" required [ngModelOptions]="{standalone: true}"></ion-input>
     </ion-item>
 
     <ion-item lines="full" class="item">
       <ion-label position="floating" class="label">Teléfono</ion-label>
-      <ion-input id="telf" class="ioninput" type="number" required></ion-input>
+      <ion-input [(ngModel)]="telf" class="ioninput" type="number" required [ngModelOptions]="{standalone: true}"></ion-input>
     </ion-item>
 
     <ion-item lines="full" class="item">

@@ -9,7 +9,7 @@ import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@io
 import { FirestoreService } from '../services/data/firestore.service';
 
 declare var google;
-let uid = 'SUCURSAL TEST 2';
+let uid: any;
 
 @Component({
   selector: 'app-maps',
@@ -26,6 +26,9 @@ export class MapsPage implements OnInit {
   markers=[];
   fromHour=new Date().toTimeString;
   toHour=new Date().toTimeString;
+  sucursal_name: string;
+  direction: string;
+  telf: number;
  
   constructor(
     private geolocation: Geolocation,
@@ -84,23 +87,25 @@ export class MapsPage implements OnInit {
   }
 
   registerSucursal(){
-    let name = document.getElementById('sucursal_name').nodeValue;
-    let address = document.getElementById('direction').nodeValue;
-    let telf = document.getElementById('telf').nodeValue;
-    let attention = this.fromHour + "-" + this.toHour
+    let name = this.sucursal_name;
+    let address = this.direction;
+    let telf = this.telf;
+    let attention = this.fromHour + "-" + this.toHour;
+    uid = name;
 
-        /*this.addLocation({
-          position : {
-            lat : Number(this.lat), 
-            lng : Number(this.long)
-          },
-          image : image,
-          title : sucursal_name,
-          text : direction
-        },uid);*/
+    this.addLocation({
+      position : {
+        lat : Number(this.lat), 
+        lng : Number(this.long)
+      },
+      nombre : name,
+      direccion : address,
+      telefono : telf,
+      horario : attention
+    },uid);
   }
   
   addLocation(sucursal : MarkerOptions, uid : any){
-    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.image, sucursal.text);
+    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.nombre, sucursal.direccion, sucursal.telefono, sucursal.horario);
   }
 }

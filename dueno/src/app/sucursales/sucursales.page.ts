@@ -9,7 +9,7 @@ import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@io
 import { FirestoreService } from '../services/data/firestore.service';
 
 declare var google;
-let uid = 'SUCURSAL TEST';
+//let uid = 'SUCURSAL TEST';
 
 @Component({
   selector: 'app-sucursales',
@@ -104,9 +104,10 @@ export class SucursalesPage implements OnInit {
       sucursalesArray.forEach((sucursal : any) => {
         this.markers.push({
           position : sucursal.position,
-          image : sucursal.image,
-          title :sucursal.title,
-          text : sucursal.text
+          nombre : sucursal.name,
+          direccion :sucursal.address,
+          telf : sucursal.telephone,
+          horario: sucursal.attention
         });
       })
     });
@@ -116,11 +117,11 @@ export class SucursalesPage implements OnInit {
     })
   }
 
-  addLocation(sucursal : MarkerOptions, uid : any){
-    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.image, sucursal.text);
+  /*addLocation(sucursal : MarkerOptions, uid : any){
+    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.name, sucursal.address, sucursal.telephone, sucursal.attention);
   }
   
   removeLocation(sucursalId){
     this.firestoreService.deleteData(sucursalId);
-  }
+  }*/
 }
