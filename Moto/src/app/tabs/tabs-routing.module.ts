@@ -9,7 +9,7 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'maps',
+        path: 'map',
         children: [
           {
             path: '',
@@ -17,12 +17,22 @@ const routes: Routes = [
               import('../maps/maps.module').then(map=>map.MapsPageModule)
           }
         ]
+      },
+      {
+        path: 'login',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../login/login.module').then(login=>login.LoginPageModule)
+          }
+        ]
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/maps',
+    redirectTo: '/',
     pathMatch: 'full'
   }
 ];
