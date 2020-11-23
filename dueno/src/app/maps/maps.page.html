@@ -8,24 +8,33 @@
 
 <ion-content>
   <form>
-    <ion-item lines="full">
-      <ion-label position="floating">Nombre Sucursal</ion-label>
-      <ion-input id="sucursal_name" class="input" type="text" required></ion-input>
+    <ion-item lines="full" class="item">
+      <ion-label position="floating" class="label">Nombre Sucursal</ion-label>
+      <ion-input id="sucursal_name" class="ioninput" type="text" required></ion-input>
     </ion-item>
 
-    <ion-item lines="full">
-      <ion-label position="floating">Dirección</ion-label>
-      <ion-input id="direction" type="text" required></ion-input>
+    <ion-item lines="full" class="item">
+      <ion-label position="floating" class="label">Dirección</ion-label>
+      <ion-input id="direction" class="ioninput" type="text" required></ion-input>
     </ion-item>
 
-    <ion-item lines="full">
-      <ion-label position="floating">Zona</ion-label>
-      <ion-input id="zone" type="text" required></ion-input>
+    <ion-item lines="full" class="item">
+      <ion-label position="floating" class="label">Teléfono</ion-label>
+      <ion-input id="telf" class="ioninput" type="number" required></ion-input>
     </ion-item>
 
-    <ion-item lines="full">
-      <ion-label position="floating">Descripción</ion-label>
-      <ion-input id="description" type="text" required></ion-input>
+    <ion-item lines="full" class="item">
+      <ion-label class="label">Horarios de Atención:</ion-label>
+    </ion-item>
+    
+    <ion-item lines="full" class="item">
+      <ion-label position="floating" class="label">Desde</ion-label>
+      <ion-datetime [ngModelOptions]="{standalone: true}" class="ioninput" displayFormat="h:mm A" pickerFormat="h mm A" [(ngModel)]="fromHour">{{from}}</ion-datetime>
+    </ion-item>
+
+    <ion-item lines="full" class="item">
+      <ion-label position="floating" class="label">Hasta</ion-label>
+      <ion-datetime [ngModelOptions]="{standalone: true}" class="ioninput" displayFormat="h:mm A" pickerFormat="h mm A" [(ngModel)]="toHour">{{to}}</ion-datetime>
     </ion-item>
 
     <ion-row>

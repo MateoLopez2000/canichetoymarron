@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
-import { IonSlides, NavController, LoadingController } from '@ionic/angular';
+import { IonSlides, NavController, LoadingController, Platform } from '@ionic/angular';
 import { GoogleMaps, MarkerOptions } from '@ionic-native/google-maps';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
@@ -24,6 +24,8 @@ export class MapsPage implements OnInit {
   location: any;
 
   markers=[];
+  fromHour=new Date().toTimeString;
+  toHour=new Date().toTimeString;
  
   constructor(
     private geolocation: Geolocation,
@@ -82,11 +84,12 @@ export class MapsPage implements OnInit {
   }
 
   registerSucursal(){
-    let image = document.getElementById('zone').nodeValue;;
-        let direction =document.getElementById('direction').nodeValue;
-        let sucursal_name = document.getElementById('sucursal_name').nodeValue;
+    let name = document.getElementById('sucursal_name').nodeValue;
+    let address = document.getElementById('direction').nodeValue;
+    let telf = document.getElementById('telf').nodeValue;
+    let attention = this.fromHour + "-" + this.toHour
 
-        this.addLocation({
+        /*this.addLocation({
           position : {
             lat : Number(this.lat), 
             lng : Number(this.long)
@@ -94,7 +97,7 @@ export class MapsPage implements OnInit {
           image : image,
           title : sucursal_name,
           text : direction
-        },uid);
+        },uid);*/
   }
   
   addLocation(sucursal : MarkerOptions, uid : any){
