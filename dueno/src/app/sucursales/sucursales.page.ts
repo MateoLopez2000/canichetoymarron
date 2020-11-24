@@ -1,13 +1,12 @@
 import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
-import { IonSlides, NavController, LoadingController } from '@ionic/angular';
-import { GoogleMaps, MarkerOptions } from '@ionic-native/google-maps';
+import { IonSlides, NavController,ToastController, LoadingController } from '@ionic/angular';
+import { GoogleMaps, Marker, MarkerCluster, MarkerOptions } from '@ionic-native/google-maps';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import * as firebase from 'firebase';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
 import { FirestoreService } from '../services/data/firestore.service';
-
 declare var google;
 //let uid = 'SUCURSAL TEST';
 
@@ -28,6 +27,7 @@ export class SucursalesPage implements OnInit {
   markerObj : any;
   markers: MarkerOptions[] = [ ];
   motos : MarkerOptions[] = [ ];
+  infoWindows : any = [ ];
 
   constructor(
     private geolocation: Geolocation,
@@ -37,9 +37,9 @@ export class SucursalesPage implements OnInit {
     private database: AngularFirestore,
     private nativeGeocoder: NativeGeocoder,
     private firestoreService: FirestoreService,
+    public toastCtrl: ToastController,
     private loadingCtrl: LoadingController
   ) {
-    this.infoWindow = new google.maps.InfoWindow();
    }  
   
   ngOnInit() {
@@ -65,7 +65,6 @@ export class SucursalesPage implements OnInit {
         this.long = this.map.center.lng()
         
          this.loadMarkers();
-         
       });
     }).catch((error) => {
       console.log('Error getting location', error);
@@ -76,7 +75,8 @@ export class SucursalesPage implements OnInit {
     const marker = new google.maps.Marker({
       position : { lat: itemMarker.position.lat, lng: itemMarker.position.lng },
       map : this.map,
-     // title : itemMarker.name
+      title : itemMarker.name,
+      text : itemMarker.address
     });
     return marker;
   }
@@ -86,7 +86,9 @@ export class SucursalesPage implements OnInit {
     this.markers.forEach(marker => {
       const markerObj = this.addMaker(marker);
       marker.markerObj = markerObj;
+      this.addInfoWindowToMarker(markerObj);
     });
+
     this.getMotos();
     this.motos.forEach(marker => {
       const markerObj = this.addMaker(marker);
@@ -98,11 +100,6 @@ export class SucursalesPage implements OnInit {
     const currentSlide = await this.slides.getActiveIndex();
     const marker = this.markers[currentSlide];
     this.map.panTo({lat: marker.position.lat, lng: marker.position.lng});
-
-    const markerObj = marker.markerObj;
-    this.infoWindow.setContent(marker.name +""+ marker.address);
-    this.infoWindow.open(this.map, markerObj);
-
   } 
 
   getLocations(){
@@ -144,6 +141,29 @@ export class SucursalesPage implements OnInit {
         });
       })
     });
+  }
+
+  addInfoWindowToMarker(marker) {
+    let infoWindowContent = '<b>' + marker.title + '</b><br/>' + marker.text;
+                           /* let infoWindowContent = '<div id="content">' +
+                            '<h4 id="firstHeading" >' + marker.title + '</h4>' +
+                            '<p>' + marker.text+ '</p>'
+                          '</div>';*/
+    let infoWindow = new google.maps.InfoWindow({
+      content: infoWindowContent
+    });
+
+    marker.addListener('click', () => {
+      this.closeAllInfoWindows();
+      infoWindow.open(this.map, marker);
+    });
+    this.infoWindows.push(infoWindow);
+  }
+
+  closeAllInfoWindows() {
+    for(let window of this.infoWindows) {
+      window.close();
+    }
   }
 
   /*addLocation(sucursal : MarkerOptions, uid : any){
