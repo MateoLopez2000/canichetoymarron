@@ -103,7 +103,10 @@ export class SucursalesPage implements OnInit {
       this.markers = [];
       sucursalesArray.forEach((sucursal : any) => {
         this.markers.push({
-          position : sucursal.position,
+          position : {
+            lat : sucursal.position.lat,
+            lng : sucursal.position.lng
+          },
           name : sucursal.name,
           address : sucursal.address,
           telephone : sucursal.telephone,
