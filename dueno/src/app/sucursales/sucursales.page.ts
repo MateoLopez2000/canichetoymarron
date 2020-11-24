@@ -104,16 +104,20 @@ export class SucursalesPage implements OnInit {
       sucursalesArray.forEach((sucursal : any) => {
         this.markers.push({
           position : sucursal.position,
-          nombre : sucursal.name,
-          direccion :sucursal.address,
-          telf : sucursal.telephone,
-          horario: sucursal.attention
+          name : sucursal.name,
+          address : sucursal.address,
+          telephone : sucursal.telephone,
+          attention : sucursal.attention
         });
       })
     });
     
     this.markers.forEach(marker => {
       console.log("Marker: " + marker.position.lat + " , " + marker.position.lng);
+      console.log(marker.name);
+      console.log(marker.address);
+      console.log(marker.telephone);
+      console.log(marker.attention);
     })
   }
 

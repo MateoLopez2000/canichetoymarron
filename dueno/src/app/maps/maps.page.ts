@@ -103,6 +103,12 @@ export class MapsPage implements OnInit {
       telefono : telf,
       horario : attention
     },uid);
+
+    this.sucursal_name="";
+    this.direction="";
+    this.telf=null;
+    this.fromHour=null;
+    this.toHour=null;
   }
   
   addLocation(sucursal : MarkerOptions, uid : any){
