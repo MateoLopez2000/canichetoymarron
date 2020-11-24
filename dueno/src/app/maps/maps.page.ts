@@ -107,8 +107,8 @@ export class MapsPage implements OnInit {
     this.sucursal_name="";
     this.direction="";
     this.telf=null;
-    this.fromHour=null;
-    this.toHour=null;
+    this.fromHour=new Date().toTimeString;
+    this.toHour=new Date().toTimeString;
   }
   
   addLocation(sucursal : MarkerOptions, uid : any){
