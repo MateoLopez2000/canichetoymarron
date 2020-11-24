@@ -17,12 +17,27 @@ const routes: Routes = [
               import('../maps/maps.module').then(map=>map.MapsPageModule)
           }
         ]
+      },
+      {
+        path: 'sucursales',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../sucursales/sucursales.module').then(sucursal=>sucursal.SucursalesPageModule)
+          }
+        ]
       }
     ]
   },
   {
     path: '',
     redirectTo: '/tabs/maps',
+    pathMatch: 'full'
+  },
+  {
+    path: '',
+    redirectTo: '/tabs/sucursales',
     pathMatch: 'full'
   }
 ];

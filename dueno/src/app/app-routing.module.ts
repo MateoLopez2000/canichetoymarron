@@ -9,6 +9,14 @@ const routes: Routes = [
     redirectTo: '',
     pathMatch: 'full'
   },
+  {
+    path: 'sucursales',
+    loadChildren: () => import('./sucursales/sucursales.module').then( m => m.SucursalesPageModule)
+  },
+  {
+    path: 'maps',
+    loadChildren: () => import('./maps/maps.module').then( m => m.MapsPageModule)
+  }
 ];
 
 @NgModule({
