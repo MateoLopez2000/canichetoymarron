@@ -29,6 +29,7 @@ declare var google;
   styleUrls: ["./maps.page.scss"],
 })
 export class MapsPage implements OnInit {
+  @ViewChild("map") mapElement: ElementRef;
   map: any;
   lat: string;
   long: string;
@@ -74,6 +75,7 @@ export class MapsPage implements OnInit {
           document.getElementById("map"),
           mapOptions
         );
+        this.addMarker(this.map);
 
         this.map.addListener("tilesloaded", () => {
           this.lat = this.map.center.lat();
@@ -83,6 +85,7 @@ export class MapsPage implements OnInit {
       .catch((error) => {
         console.log("Error getting location", error);
       });
+
     // alert('latitud' +this.lat+', longitud'+this.long )
   }
 
@@ -99,19 +102,39 @@ export class MapsPage implements OnInit {
         })
         .catch((err) => console.log(err));
     });
-    setTimeout(() => {
-      this.geolocation.getCurrentPosition().then((geposition: Geoposition) => {
-        let lat = geposition.coords.latitude.toString();
-        let long = geposition.coords.longitude.toString();
-        // this.auth.register("UPB", this.lat, this.long).then(auth => {
-        console.log("ACTUALIZADO" + lat + long);
-        this.auth
-          .update_location(this.idGeneretor(), "22222", "22222")
-          .then((auth) => {
-            console.log(auth);
-          })
-          .catch((err) => console.log(err));
-      });
-    }, 5000);
+  }
+  clickFunction() {
+    this.geolocation.getCurrentPosition().then((geposition: Geoposition) => {
+      let lat = geposition.coords.latitude.toString();
+      let long = geposition.coords.longitude.toString();
+      // this.auth.register("UPB", this.lat, this.long).then(auth => {
+      console.log("ACTUALIZADO" + lat + long);
+      this.auth
+        .update_location(this.idGeneretor(), lat, long)
+        .then((auth) => {
+          console.log(auth);
+        })
+        .catch((err) => console.log(err));
+    });
+  }
+  addMarker(map: any) {
+    let marker = new google.maps.Marker({
+      map: map,
+      animation: google.maps.Animation.DROP,
+      position: map.getCenter(),
+    });
+
+    let content = "<h4>Information!</h4>";
+
+    this.addInfoWindow(marker, content);
+  }
+  addInfoWindow(marker, content) {
+    let infoWindow = new google.maps.InfoWindow({
+      content: content,
+    });
+
+    google.maps.event.addListener(marker, "click", () => {
+      infoWindow.open(this.map, marker);
+    });
   }
 }
