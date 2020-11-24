@@ -28,21 +28,9 @@ export class LoginPage implements OnInit {
     console.log(this.user.email,this.user.password);
 
     if (user.user.email) {
-      this.router.navigate(['/tabs/map']);
+      this.router.navigate(['/tabs/']);
     } else {
       alert('login error!!');
-    }
-  }
-
-  async register() {
-    const user = await this.ngFireAuth.createUserWithEmailAndPassword(this.user.email, this.user.password);
-
-    console.log("registro "+this.user.email,this.user.password);
-
-    if (user.user.email) {
-      this.router.navigate(['/tabs/map']);
-    } else {
-      alert('Hay un error!!');
     }
   }
 }
