@@ -27,6 +27,7 @@ export class SucursalesPage implements OnInit {
   location : any;
   markerObj : any;
   markers: MarkerOptions[] = [ ];
+  motos : MarkerOptions[] = [ ];
 
   constructor(
     private geolocation: Geolocation,
@@ -73,9 +74,9 @@ export class SucursalesPage implements OnInit {
 
   addMaker(itemMarker: MarkerOptions) {
     const marker = new google.maps.Marker({
-      position: { lat: itemMarker.position.lat, lng: itemMarker.position.lng },
-      map: this.map,
-      title: itemMarker.title
+      position : { lat: itemMarker.position.lat, lng: itemMarker.position.lng },
+      map : this.map,
+     // title : itemMarker.name
     });
     return marker;
   }
@@ -83,6 +84,11 @@ export class SucursalesPage implements OnInit {
   loadMarkers(){
     this.getLocations();
     this.markers.forEach(marker => {
+      const markerObj = this.addMaker(marker);
+      marker.markerObj = markerObj;
+    });
+    this.getMotos();
+    this.motos.forEach(marker => {
       const markerObj = this.addMaker(marker);
       marker.markerObj = markerObj;
     });
@@ -94,8 +100,9 @@ export class SucursalesPage implements OnInit {
     this.map.panTo({lat: marker.position.lat, lng: marker.position.lng});
 
     const markerObj = marker.markerObj;
-    this.infoWindow.setContent(marker.title);
+    this.infoWindow.setContent(marker.name +""+ marker.address);
     this.infoWindow.open(this.map, markerObj);
+
   } 
 
   getLocations(){
@@ -122,6 +129,21 @@ export class SucursalesPage implements OnInit {
       console.log(marker.telephone);
       console.log(marker.attention);
     })
+  }
+
+  getMotos(){
+    this.firestoreService.getData('lugares').subscribe((motosArray) => {
+      this.motos = [];
+      motosArray.forEach((moto : any) => {
+        this.motos.push({
+          position : {
+            lat : Number(moto.latitud),
+            lng : Number(moto.longitud),
+          },
+          nombreDeMoto : moto.nombreDeMoto
+        });
+      })
+    });
   }
 
   /*addLocation(sucursal : MarkerOptions, uid : any){
