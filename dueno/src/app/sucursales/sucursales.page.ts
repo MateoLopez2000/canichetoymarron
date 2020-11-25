@@ -76,7 +76,8 @@ export class SucursalesPage implements OnInit {
       position : { lat: itemMarker.position.lat, lng: itemMarker.position.lng },
       map : this.map,
       title : itemMarker.name,
-      text : itemMarker.address
+      text : itemMarker.address,
+      img : itemMarker.image
     });
     return marker;
   }
@@ -114,7 +115,8 @@ export class SucursalesPage implements OnInit {
           name : sucursal.name,
           address : sucursal.address,
           telephone : sucursal.telephone,
-          attention : sucursal.attention
+          attention : sucursal.attention,
+          image : sucursal.image //
         });
       })
     });
@@ -145,10 +147,7 @@ export class SucursalesPage implements OnInit {
 
   addInfoWindowToMarker(marker) {
     let infoWindowContent = '<b>' + marker.title + '</b><br/>' + marker.text;
-                           /* let infoWindowContent = '<div id="content">' +
-                            '<h4 id="firstHeading" >' + marker.title + '</h4>' +
-                            '<p>' + marker.text+ '</p>'
-                          '</div>';*/
+                        
     let infoWindow = new google.maps.InfoWindow({
       content: infoWindowContent
     });
