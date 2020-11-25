@@ -27,7 +27,7 @@ export class LoginPage implements OnInit {
     await this.ngFireAuth.signInWithEmailAndPassword(this.user.email, this.user.password).
     then(
       ()=>{
-      this.router.navigate(['/tabs/map']);
+      this.router.navigate(['/tabs/maps']);
       },
       async error=> {
         const alert = await this.alertCtrl.create({
@@ -45,7 +45,7 @@ export class LoginPage implements OnInit {
     await this.ngFireAuth.createUserWithEmailAndPassword(this.user.email, this.user.password).
     then(
       ()=>{
-      this.router.navigate(['/tabs/map']);
+      this.router.navigate(['/tabs/maps']);
       },
       async error=> {
         const alert = await this.alertCtrl.create({
