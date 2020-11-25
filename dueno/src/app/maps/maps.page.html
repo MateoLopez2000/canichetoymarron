@@ -36,13 +36,33 @@
       <ion-label position="floating" class="label">Hasta</ion-label>
       <ion-datetime [ngModelOptions]="{standalone: true}" class="ioninput" displayFormat="h:mm A" pickerFormat="h mm A" [(ngModel)]="toHour"></ion-datetime>
     </ion-item>
-
+    <ion-card> 
+      <ion-card-header>
+        <ion-card-subtitle>
+          Upload Image
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div *ngIf="uploadProgress | async as pct">
+          Progress: {{ round(pct | number) }}%
+        <ion-progress-bar value="{{ pct / 100 }}"></ion-progress-bar>
+        </div>
+          <ion-spinner [hidden]="!isUploading" name="lines"></ion-spinner>
+          <div class="btn btn-primary">
+            <input type="file"
+                   id="file"
+                   (change)="handleFileInput($event.target.files)">
+            <ion-button (click)="uploadImage()"> Upload </ion-button>
+          </div>
+      </ion-card-content>
+    </ion-card>
     <ion-row>
       <ion-col>
         <ion-button id="registerButton" type="submit" color="secondary" expand="block" (click)="registerSucursal()">Registrar Sucursal</ion-button>
       </ion-col>
     </ion-row>
   </form>
+
   <h5>Elija la ubicación en el mapa:</h5>
   <div id="map"></div>
   <div style="display:none">Latitud: {{lat}}</div>

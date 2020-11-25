@@ -35,4 +35,7 @@ export class FirestoreService {
   public updateData(collection, id, data){
     return this.angularFirestore.collection(collection).doc(id).update(data);
   }
+  public getMotos(collection){
+    return this.angularFirestore.collection(collection).valueChanges();
+  }
 }
