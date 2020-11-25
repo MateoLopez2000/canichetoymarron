@@ -1,33 +1,38 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth'
 import { AlertController } from '@ionic/angular';
-
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
+  selector: 'app-password-recovery',
+  templateUrl: './password-recovery.page.html',
+  styleUrls: ['./password-recovery.page.scss'],
 })
-export class LoginPage implements OnInit {
+export class PasswordRecoveryPage implements OnInit {
   user= {
-    email: '',
-    password: ''
+    email: ''
   }
 
   constructor(
     private router: Router,
     public ngFireAuth: AngularFireAuth,
     private alertCtrl:AlertController
-    ) { }
+  ) { }
 
   ngOnInit() {
   }
 
-  async login() {
-    await this.ngFireAuth.signInWithEmailAndPassword(this.user.email, this.user.password).
+  async reset() {
+    await this.ngFireAuth.sendPasswordResetEmail(this.user.email).
     then(
-      ()=>{
-      this.router.navigate(['/tabs/map']);
+      async ()=> {
+        const alert = await this.alertCtrl.create({
+          message:'Check your Email to Reset Password',
+          buttons:[{text: 'ok',role:'cancel',handler:()=>{
+            this.router.navigateByUrl('');
+          },},],
+        },
+        );
+        await alert.present();
       },
       async error=> {
         const alert = await this.alertCtrl.create({
@@ -41,24 +46,4 @@ export class LoginPage implements OnInit {
     )
   }
 
-  async register() {
-    await this.ngFireAuth.createUserWithEmailAndPassword(this.user.email, this.user.password).
-    then(
-      ()=>{
-      this.router.navigate(['/tabs/map']);
-      },
-      async error=> {
-        const alert = await this.alertCtrl.create({
-          message:error.message,
-          buttons:[{text: 'ok',role:'cancel',handler:()=>{
-          },},],
-        },
-        );
-        await alert.present();
-      }
-    )
-  }
-  async resetPassword() {
-    this.router.navigate(['/password-recovery']);
-  }
 }

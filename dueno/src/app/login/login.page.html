@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>login</ion-title>
+    <ion-title>Bienvenido a Las Chachas!!</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -8,15 +8,20 @@
   <ion-card id = "logincard">
     <ion-card-content>
       <ion-item>
-        <ion-input [(ngModel)]="user.email" placeholder="username"></ion-input>
+        <ion-input [(ngModel)]="user.email" placeholder="youremail@gmail.com"></ion-input>
       </ion-item>
       <br>
       <ion-item>
-        <ion-input [(ngModel)]="user.password" placeholder="password" type="password"></ion-input>
+        <ion-input [(ngModel)]="user.password" placeholder="Password" type="password"></ion-input>
       </ion-item>
       <br>
-      <ion-button aria-expanded="block" (click)="login()">login</ion-button>
-      <ion-button aria-expanded="block" color="secondary" (click)="register()">register</ion-button>
+      <div style= "text-align: center; margin: auto">
+        <ion-button aria-expanded="block" (click)="login()">Login</ion-button>
+        <ion-button aria-expanded="block" color="secondary" (click)="register()">Register</ion-button>
+      </div>
+      <div style= "text-align: center; margin: auto">
+        <ion-button fill="clear" (click)="resetPassword()">Forget Password</ion-button >
+      </div>
     </ion-card-content>
   </ion-card>
 </ion-content>

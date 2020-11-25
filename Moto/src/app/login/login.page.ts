@@ -2,6 +2,7 @@ import { Component, NgModule, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AngularFireAuth } from '@angular/fire/auth'
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -16,21 +17,31 @@ export class LoginPage implements OnInit {
 
   constructor(
     private router: Router,
-    public ngFireAuth: AngularFireAuth
+    public ngFireAuth: AngularFireAuth,
+    private alertCtrl:AlertController
     ) { }
 
   ngOnInit() {
   }
 
   async login() {
-    const user = await this.ngFireAuth.signInWithEmailAndPassword(this.user.email, this.user.password);
-
-    console.log(this.user.email,this.user.password);
-
-    if (user.user.email) {
-      this.router.navigate(['/tabs/']);
-    } else {
-      alert('login error!!');
-    }
+    await this.ngFireAuth.signInWithEmailAndPassword(this.user.email, this.user.password).
+    then(
+      ()=>{
+      this.router.navigate(['/tabs/map']);
+      },
+      async error=> {
+        const alert = await this.alertCtrl.create({
+          message:error.message,
+          buttons:[{text: 'ok',role:'cancel',handler:()=>{
+          },},],
+        },
+        );
+        await alert.present();
+      }
+    )
+  }
+  async resetPassword() {
+    this.router.navigate(['/password-recovery']);
   }
 }
