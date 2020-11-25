@@ -57,7 +57,7 @@ export class SucursalesPage implements OnInit {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
       } 
 
-      this.map = new google.maps.Map(document.getElementById('map'), mapOptions); 
+      this.map = new google.maps.Map(document.getElementById('map1'), mapOptions); 
 
       this.map.addListener('tilesloaded', () => {
         this.lat = this.map.center.lat()

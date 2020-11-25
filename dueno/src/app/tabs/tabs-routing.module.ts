@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { pathToFileURL } from 'url';
 
 import { TabsPage } from './tabs.page';
 
@@ -10,34 +11,22 @@ const routes: Routes = [
     children: [
       {
         path: 'maps',
-        children: [
-          {
-            path: '',
-            loadChildren: () =>
-              import('../maps/maps.module').then(map=>map.MapsPageModule)
-          }
-        ]
+        loadChildren: () => import('../maps/maps.module').then(map=>map.MapsPageModule)
       },
       {
         path: 'sucursales',
-        children: [
-          {
-            path: '',
-            loadChildren: () =>
-              import('../sucursales/sucursales.module').then(sucursal=>sucursal.SucursalesPageModule)
-          }
-        ]
+        loadChildren: () => import('../sucursales/sucursales.module').then(sucursal=>sucursal.SucursalesPageModule)
+      },
+      {
+        path: '',
+        redirectTo: '/tabs/maps',
+        pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
     redirectTo: '/tabs/maps',
-    pathMatch: 'full'
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/sucursales',
     pathMatch: 'full'
   }
 ];
