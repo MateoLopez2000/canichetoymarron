@@ -1,10 +1,13 @@
-import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
-import { IonSlides, NavController, LoadingController, Platform } from '@ionic/angular';
+import { NavController, LoadingController, Platform , AlertController} from '@ionic/angular';
 import { GoogleMaps, MarkerOptions } from '@ionic-native/google-maps';
-import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
+import { AngularFirestoreDocument, AngularFirestore} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import * as firebase from 'firebase';
+import { } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs/operators';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
 import { FirestoreService } from '../services/data/firestore.service';
 
@@ -22,7 +25,7 @@ export class MapsPage implements OnInit {
   lat: string;
   long: string;  
   location: any;
-
+  selectedFile: any;
   markers=[];
   fromHour=new Date().toTimeString;
   toHour=new Date().toTimeString;
@@ -30,6 +33,19 @@ export class MapsPage implements OnInit {
   direction: string;
   telf: number;
  
+   sucursalImage : any;
+
+   @Input() path: string; 
+   @Output() outcome = new EventEmitter<any>(true);
+
+   task: AngularFireUploadTask;
+   uploadProgress: Observable<any>;
+   round = Math.round;
+   fileToUpload: File;
+   UploadedFireURL: Observable<string>;
+   filesize: number; 
+   isUploading = false;
+   
   constructor(
     private geolocation: Geolocation,
     public zone: NgZone,
@@ -38,7 +54,9 @@ export class MapsPage implements OnInit {
     private database: AngularFirestore,
     private nativeGeocoder: NativeGeocoder,
     private firestoreService: FirestoreService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private fireStorage: AngularFireStorage,
+    private alertCtrl: AlertController
   ) {
    }  
   
@@ -113,5 +131,59 @@ export class MapsPage implements OnInit {
   
   addLocation(sucursal : MarkerOptions, uid : any){
     this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.nombre, sucursal.direccion, sucursal.telefono, sucursal.horario);
+  }
+
+  handleFileInput(files: FileList) {
+    this.fileToUpload = files.item(0);
+  }
+  
+  uploadImage() {
+    let filename = this.fileToUpload.name;
+    const fullPath = `sucursalesImages/${filename}`;
+    
+    const fileref = this.fireStorage.ref(fullPath);
+
+    const customMetadata = { app: 'Upload image' };
+    // Totally optional metadata
+    this.task = this.fireStorage.upload(fullPath, this.fileToUpload, { customMetadata });
+    this.isUploading = true;
+    this.task.catch(res => {
+      this.isUploading = false;
+      console.log("Error uploading the file");
+    });
+    this.uploadProgress = this.task.percentageChanges();
+    this.uploadProgress.subscribe( percentage => {
+      console.log(percentage);
+    }, err => {
+      this.isUploading = false;
+    });
+    this.task.snapshotChanges().pipe(
+      finalize(() => {
+        this.UploadedFireURL = fileref.getDownloadURL();
+        this.UploadedFireURL.subscribe( urlStr => {
+          //created an object for sake of clarity
+          const uploadOutcome = {
+            hasUploaded: true,
+            uploadUrl: urlStr
+          };
+          this.outcome.emit(uploadOutcome);
+          this.isUploading = false;
+          this.uploadDone();
+          this.uploadProgress = null;
+        });
+      }),
+      tap(snap => {
+        this.filesize = snap.totalBytes;
+      })
+    ).subscribe( res => {
+      console.log(res);
+    })
+  }
+  async uploadDone() {
+    const alert = await this.alertCtrl.create({
+      message: "Image uploaded 😊",
+      buttons: ['Ok']
+    });
+    await alert.present();
   }
 }
