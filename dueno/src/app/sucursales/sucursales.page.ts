@@ -1,34 +1,11 @@
-import {
-  Component,
-  OnInit,
-  NgZone,
-  ElementRef,
-  ViewChild,
-} from "@angular/core";
+import {Component,OnInit,NgZone,ElementRef,ViewChild,} from "@angular/core";
 import { Geolocation, Geoposition } from "@ionic-native/geolocation/ngx";
-import {
-  IonSlides,
-  NavController,
-  ToastController,
-  LoadingController,
-} from "@ionic/angular";
-import {
-  GoogleMaps,
-  Marker,
-  MarkerCluster,
-  MarkerOptions,
-} from "@ionic-native/google-maps";
-import {
-  AngularFirestoreDocument,
-  AngularFirestore,
-} from "@angular/fire/firestore";
+import {IonSlides,NavController,ToastController,LoadingController,} from "@ionic/angular";
+import {GoogleMaps,Marker,MarkerCluster,MarkerOptions,} from "@ionic-native/google-maps";
+import {AngularFirestoreDocument,AngularFirestore,} from "@angular/fire/firestore";
 import { Observable } from "rxjs";
 import * as firebase from "firebase";
-import {
-  NativeGeocoder,
-  NativeGeocoderResult,
-  NativeGeocoderOptions,
-} from "@ionic-native/native-geocoder/ngx";
+import {NativeGeocoder,NativeGeocoderResult, NativeGeocoderOptions,} from "@ionic-native/native-geocoder/ngx";
 import { FirestoreService } from "../services/data/firestore.service";
 import { tick } from "@angular/core/testing";
 declare var google;
@@ -172,14 +149,14 @@ export class SucursalesPage implements OnInit {
             lat: Number(moto.latitud),
             lng: Number(moto.longitud),
           },
-          nombreDeMoto: moto.nombreDeMoto,
-          actualizarBool: moto.actualizarBool,
+          nombreDeMoto: moto.nombreDeMoto
         });
       });
     });
   }
-  tracking() {
+  updateTracking() {
     this.firestoreService.trackingUpdate("true");
+    this.firestoreService.trackingUpdate("false");
   }
 
   addInfoWindowToMarker(marker) {

@@ -1,38 +1,14 @@
-import {
-  Component,
-  OnInit,
-  NgZone,
-  ElementRef,
-  ViewChild,
-  Input,
-  Output,
-  EventEmitter,
-} from "@angular/core";
+import {Component,OnInit,NgZone,ElementRef,ViewChild,Input,Output, EventEmitter} from "@angular/core";
 import { Geolocation, Geoposition } from "@ionic-native/geolocation/ngx";
-import {
-  NavController,
-  LoadingController,
-  Platform,
-  AlertController,
-} from "@ionic/angular";
+import {NavController,LoadingController, Platform,AlertController,} from "@ionic/angular";
 import { GoogleMaps, MarkerOptions } from "@ionic-native/google-maps";
-import {
-  AngularFireStorage,
-  AngularFireUploadTask,
-} from "@angular/fire/storage";
-import {
-  AngularFirestoreDocument,
-  AngularFirestore,
-} from "@angular/fire/firestore";
+import {AngularFireStorage,AngularFireUploadTask,} from "@angular/fire/storage";
+import {AngularFirestoreDocument,AngularFirestore,} from "@angular/fire/firestore";
 import { Observable } from "rxjs";
 import * as firebase from "firebase";
 import {} from "rxjs";
 import { catchError, finalize, tap } from "rxjs/operators";
-import {
-  NativeGeocoder,
-  NativeGeocoderResult,
-  NativeGeocoderOptions,
-} from "@ionic-native/native-geocoder/ngx";
+import {NativeGeocoder,NativeGeocoderResult,NativeGeocoderOptions,} from "@ionic-native/native-geocoder/ngx";
 import { FirestoreService } from "../services/data/firestore.service";
 
 declare var google;
