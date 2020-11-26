@@ -120,14 +120,6 @@ export class SucursalesPage implements OnInit {
         });
       })
     });
-    
-    this.markers.forEach(marker => {
-      console.log("Marker: " + marker.position.lat + " , " + marker.position.lng);
-      console.log(marker.name);
-      console.log(marker.address);
-      console.log(marker.telephone);
-      console.log(marker.attention);
-    })
   }
 
   getMotos(){
@@ -164,12 +156,4 @@ export class SucursalesPage implements OnInit {
       window.close();
     }
   }
-
-  /*addLocation(sucursal : MarkerOptions, uid : any){
-    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.name, sucursal.address, sucursal.telephone, sucursal.attention);
-  }
-  
-  removeLocation(sucursalId){
-    this.firestoreService.deleteData(sucursalId);
-  }*/
 }
