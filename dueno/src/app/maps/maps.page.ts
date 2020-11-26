@@ -31,20 +31,19 @@ export class MapsPage implements OnInit {
   sucursal_name: string;
   direction: string;
   telf: number;
+  urlImage: any;
 
-  sucursalImage: any;
+   @Input() path: string; 
+   @Output() outcome = new EventEmitter<any>(true);
 
-  @Input() path: string;
-  @Output() outcome = new EventEmitter<any>(true);
-
-  task: AngularFireUploadTask;
-  uploadProgress: Observable<any>;
-  round = Math.round;
-  fileToUpload: File;
-  UploadedFireURL: Observable<string>;
-  filesize: number;
-  isUploading = false;
-
+   task: AngularFireUploadTask;
+   uploadProgress: Observable<any>;
+   round = Math.round;
+   fileToUpload: File;
+   UploadedFireURL: Observable<string>;
+   filesize: number; 
+   isUploading = false;
+   
   constructor(
     private geolocation: Geolocation,
     public zone: NgZone,
@@ -126,32 +125,22 @@ export class MapsPage implements OnInit {
           lat: Number(this.lat),
           lng: Number(this.long),
         },
-        nombre: name,
-        direccion: address,
-        telefono: telf,
-        horario: attention,
-      },
-      uid
-    );
+          nombre : name,
+          direccion : address,
+          telefono : telf,
+          horario : attention,
+          imagen : this.urlImage
+    },uid);
 
-    this.sucursal_name = "";
-    this.direction = "";
-    this.telf = null;
-    this.fromHour = new Date().toTimeString;
-    this.toHour = new Date().toTimeString;
+    this.sucursal_name="";
+    this.direction="";
+    this.telf=null;
+    this.fromHour=new Date().toTimeString;
+    this.toHour=new Date().toTimeString;
   }
-
-  addLocation(sucursal: MarkerOptions, uid: any) {
-    this.firestoreService.insertData(
-      "sucursales",
-      uid,
-      sucursal.position.lat,
-      sucursal.position.lng,
-      sucursal.nombre,
-      sucursal.direccion,
-      sucursal.telefono,
-      sucursal.horario
-    );
+  
+  addLocation(sucursal : MarkerOptions, uid : any){
+    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.nombre, sucursal.direccion, sucursal.telefono, sucursal.horario, sucursal.imagen);
   }
 
   handleFileInput(files: FileList) {
@@ -175,38 +164,33 @@ export class MapsPage implements OnInit {
       console.log("Error uploading the file");
     });
     this.uploadProgress = this.task.percentageChanges();
-    this.uploadProgress.subscribe(
-      (percentage) => {
-        console.log(percentage);
-      },
-      (err) => {
-        this.isUploading = false;
-      }
-    );
-    this.task
-      .snapshotChanges()
-      .pipe(
-        finalize(() => {
-          this.UploadedFireURL = fileref.getDownloadURL();
-          this.UploadedFireURL.subscribe((urlStr) => {
-            //created an object for sake of clarity
-            const uploadOutcome = {
-              hasUploaded: true,
-              uploadUrl: urlStr,
-            };
-            this.outcome.emit(uploadOutcome);
-            this.isUploading = false;
-            this.uploadDone();
-            this.uploadProgress = null;
-          });
-        }),
-        tap((snap) => {
-          this.filesize = snap.totalBytes;
-        })
-      )
-      .subscribe((res) => {
-        console.log(res);
-      });
+    this.uploadProgress.subscribe( percentage => {
+      console.log(percentage);
+    }, err => {
+      this.isUploading = false;
+    });
+    this.task.snapshotChanges().pipe(
+      finalize(() => {
+        this.UploadedFireURL = fileref.getDownloadURL();
+        this.UploadedFireURL.subscribe( urlStr => {
+          //created an object for sake of clarity
+          this.urlImage = urlStr;
+          const uploadOutcome = {
+            hasUploaded: true,
+            uploadUrl: urlStr
+          };
+          this.outcome.emit(uploadOutcome);
+          this.isUploading = false;
+          this.uploadDone();
+          this.uploadProgress = null;
+        });
+      }),
+      tap(snap => {
+        this.filesize = snap.totalBytes;
+      })
+    ).subscribe( res => {
+      console.log(res);
+    })
   }
   async uploadDone() {
     const alert = await this.alertCtrl.create({

@@ -8,26 +8,18 @@ import { Marker, MarkerOptions } from "@ionic-native/google-maps";
 })
 export class FirestoreService {
   constructor(private angularFirestore: AngularFirestore) {}
-
-  public insertData(
-    collection,
-    id,
-    latitud: number,
-    longitud: number,
-    nombre: string,
-    direccion: string,
-    telefono: number,
-    horario: string
-  ) {
-    this.angularFirestore.doc(collection + "/" + id).set({
-      position: {
-        lat: latitud,
-        lng: longitud,
-      },
-      name: nombre,
-      address: direccion,
-      telephone: telefono,
-      attention: horario,
+  
+  public insertData(collection, id, latitud :number, longitud: number, nombre :string, direccion :string, telefono :number, horario :string, imagen :string){
+    this.angularFirestore.doc(collection+'/'+id).set({
+        position: {
+          lat: latitud,
+          lng: longitud
+        },
+        name: nombre,
+        address: direccion,
+        telephone: telefono,
+        attention: horario,
+        imageURL: imagen
     });
   }
 

@@ -120,23 +120,13 @@ export class SucursalesPage implements OnInit {
             lat: sucursal.position.lat,
             lng: sucursal.position.lng,
           },
-          name: sucursal.name,
-          address: sucursal.address,
-          telephone: sucursal.telephone,
-          attention: sucursal.attention,
-          image: sucursal.image, //
+          name : sucursal.name,
+          address : sucursal.address,
+          telephone : sucursal.telephone,
+          attention : sucursal.attention,
+          imageURL : sucursal.imageURL
         });
       });
-    });
-
-    this.markers.forEach((marker) => {
-      console.log(
-        "Marker: " + marker.position.lat + " , " + marker.position.lng
-      );
-      console.log(marker.name);
-      console.log(marker.address);
-      console.log(marker.telephone);
-      console.log(marker.attention);
     });
   }
 
@@ -192,12 +182,4 @@ export class SucursalesPage implements OnInit {
       });
     });
   }
-
-  /*addLocation(sucursal : MarkerOptions, uid : any){
-    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.name, sucursal.address, sucursal.telephone, sucursal.attention);
-  }
-  
-  removeLocation(sucursalId){
-    this.firestoreService.deleteData(sucursalId);
-  }*/
 }

@@ -19,14 +19,14 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/tabs/maps',
+        redirectTo: '/tabs/sucursales',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/maps',
+    redirectTo: '/tabs/sucursales',
     pathMatch: 'full'
   }
 ];
