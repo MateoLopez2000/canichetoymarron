@@ -89,7 +89,15 @@ export class SucursalesPage implements OnInit {
     });
     return marker;
   }
-
+  addMakerMotos(itemMarker: MarkerOptions) {
+    const marker = new google.maps.Marker({
+      position : { lat: itemMarker.position.lat, lng: itemMarker.position.lng },
+      map : this.map,
+      title : itemMarker.nombreDeMoto,
+      icon : "../assets/icon/repartidor.png"
+    });
+    return marker;
+  }
   loadMarkers() {
     this.getLocations();
     this.markers.forEach((marker) => {
@@ -100,7 +108,7 @@ export class SucursalesPage implements OnInit {
 
     this.getMotos();
     this.motos.forEach((marker) => {
-      const markerObj = this.addMaker(marker);
+      const markerObj = this.addMakerMotos(marker);
       marker.markerObj = markerObj;
     });
   }
