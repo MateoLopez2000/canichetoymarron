@@ -32,8 +32,7 @@ export class MapsPage implements OnInit {
   sucursal_name: string;
   direction: string;
   telf: number;
- 
-   sucursalImage : any;
+  urlImage: any;
 
    @Input() path: string; 
    @Output() outcome = new EventEmitter<any>(true);
@@ -119,7 +118,8 @@ export class MapsPage implements OnInit {
       nombre : name,
       direccion : address,
       telefono : telf,
-      horario : attention
+      horario : attention,
+      imagen : this.urlImage
     },uid);
 
     this.sucursal_name="";
@@ -130,7 +130,7 @@ export class MapsPage implements OnInit {
   }
   
   addLocation(sucursal : MarkerOptions, uid : any){
-    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.nombre, sucursal.direccion, sucursal.telefono, sucursal.horario);
+    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.nombre, sucursal.direccion, sucursal.telefono, sucursal.horario, sucursal.imagen);
   }
 
   handleFileInput(files: FileList) {
@@ -162,6 +162,7 @@ export class MapsPage implements OnInit {
         this.UploadedFireURL = fileref.getDownloadURL();
         this.UploadedFireURL.subscribe( urlStr => {
           //created an object for sake of clarity
+          this.urlImage = urlStr;
           const uploadOutcome = {
             hasUploaded: true,
             uploadUrl: urlStr

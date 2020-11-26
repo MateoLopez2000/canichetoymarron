@@ -12,6 +12,9 @@
     <ion-slide *ngFor="let marker of markers">
       <ion-card>
         <ion-item>
+          <ion-thumbnail slot="start">
+            <img [src]="marker.imageURL">
+          </ion-thumbnail>
           <ion-label class="ion-text-wrap">
             <h3><b>{{ marker.name }}</b></h3>
             <h4>{{ marker.attention }}</h4>

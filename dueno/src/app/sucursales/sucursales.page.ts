@@ -116,7 +116,7 @@ export class SucursalesPage implements OnInit {
           address : sucursal.address,
           telephone : sucursal.telephone,
           attention : sucursal.attention,
-          image : sucursal.image //
+          imageURL : sucursal.imageURL
         });
       })
     });
