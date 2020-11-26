@@ -1,16 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Marker, MarkerOptions } from '@ionic-native/google-maps';
+import { AngularFirestore } from "@angular/fire/firestore";
+import { Marker, MarkerOptions } from "@ionic-native/google-maps";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class FirestoreService {
-
-  constructor(private angularFirestore: AngularFirestore) { 
-  }
-
+  constructor(private angularFirestore: AngularFirestore) {}
+  
   public insertData(collection, id, latitud :number, longitud: number, nombre :string, direccion :string, telefono :number, horario :string, imagen :string){
     this.angularFirestore.doc(collection+'/'+id).set({
         position: {
@@ -25,18 +23,25 @@ export class FirestoreService {
     });
   }
 
-  public getData(collection){
+  public getData(collection) {
     return this.angularFirestore.collection(collection).valueChanges();
   }
-
-  public deleteData(sucursal){
-    return this.angularFirestore.doc('sucursales/'+sucursal).delete();
+  public trackingUpdate(updateBool: string) {
+    return new Promise((resolve, reject) => {
+      this.angularFirestore.collection("tracking").doc("update").update({
+        actualizarBool: updateBool,
+      });
+    });
   }
 
-  public updateData(collection, id, data){
+  public deleteData(sucursal) {
+    return this.angularFirestore.doc("sucursales/" + sucursal).delete();
+  }
+
+  public updateData(collection, id, data) {
     return this.angularFirestore.collection(collection).doc(id).update(data);
   }
-  public getMotos(collection){
+  public getMotos(collection) {
     return this.angularFirestore.collection(collection).valueChanges();
   }
 }

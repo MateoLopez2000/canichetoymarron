@@ -1,34 +1,33 @@
-import { Component, OnInit, NgZone, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
-import { NavController, LoadingController, Platform , AlertController} from '@ionic/angular';
-import { GoogleMaps, MarkerOptions } from '@ionic-native/google-maps';
-import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
-import { AngularFirestoreDocument, AngularFirestore} from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import * as firebase from 'firebase';
-import { } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
-import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
-import { FirestoreService } from '../services/data/firestore.service';
+import {Component,OnInit,NgZone,ElementRef,ViewChild,Input,Output, EventEmitter} from "@angular/core";
+import { Geolocation, Geoposition } from "@ionic-native/geolocation/ngx";
+import {NavController,LoadingController, Platform,AlertController,} from "@ionic/angular";
+import { GoogleMaps, MarkerOptions } from "@ionic-native/google-maps";
+import {AngularFireStorage,AngularFireUploadTask,} from "@angular/fire/storage";
+import {AngularFirestoreDocument,AngularFirestore,} from "@angular/fire/firestore";
+import { Observable } from "rxjs";
+import * as firebase from "firebase";
+import {} from "rxjs";
+import { catchError, finalize, tap } from "rxjs/operators";
+import {NativeGeocoder,NativeGeocoderResult,NativeGeocoderOptions,} from "@ionic-native/native-geocoder/ngx";
+import { FirestoreService } from "../services/data/firestore.service";
 
 declare var google;
 let uid: any;
 
 @Component({
-  selector: 'app-maps',
-  templateUrl: './maps.page.html',
-  styleUrls: ['./maps.page.scss'],
+  selector: "app-maps",
+  templateUrl: "./maps.page.html",
+  styleUrls: ["./maps.page.scss"],
 })
 export class MapsPage implements OnInit {
-
   map: any;
   lat: string;
-  long: string;  
+  long: string;
   location: any;
   selectedFile: any;
-  markers=[];
-  fromHour=new Date().toTimeString;
-  toHour=new Date().toTimeString;
+  markers = [];
+  fromHour = new Date().toTimeString;
+  toHour = new Date().toTimeString;
   sucursal_name: string;
   direction: string;
   telf: number;
@@ -49,77 +48,88 @@ export class MapsPage implements OnInit {
     private geolocation: Geolocation,
     public zone: NgZone,
     public navCtrl: NavController,
-    private googleMaps: GoogleMaps,  
+    private googleMaps: GoogleMaps,
     private database: AngularFirestore,
     private nativeGeocoder: NativeGeocoder,
     private firestoreService: FirestoreService,
     private loadingCtrl: LoadingController,
     private fireStorage: AngularFireStorage,
     private alertCtrl: AlertController
-  ) {
-   }  
-  
+  ) {}
+
   ngOnInit() {
-    this.loadMap();    
+    this.loadMap();
   }
 
   loadMap() {
-    this.geolocation.getCurrentPosition().then((resp) => {
-      let latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
-      this.lat = resp.coords.latitude.toString();
-      this.long = resp.coords.longitude.toString();
-      
-      let mapOptions = {
-        center: latLng,
-        zoom: 15,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-      } 
+    this.geolocation
+      .getCurrentPosition()
+      .then((resp) => {
+        let latLng = new google.maps.LatLng(
+          resp.coords.latitude,
+          resp.coords.longitude
+        );
+        this.lat = resp.coords.latitude.toString();
+        this.long = resp.coords.longitude.toString();
 
-      this.map = new google.maps.Map(document.getElementById('map'), mapOptions); 
-      
-      var marker = new google.maps.Marker({
-        draggable: true,
-        map: this.map,
-        animation: google.maps.Animation.DROP,
-        position: latLng
-      });
+        let mapOptions = {
+          center: latLng,
+          zoom: 15,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+        };
 
-      this.markers.push(marker);
-      //alert(this.markers[0].position)
+        this.map = new google.maps.Map(
+          document.getElementById("map"),
+          mapOptions
+        );
 
-      marker.addListener('dragend', () => {
+        var marker = new google.maps.Marker({
+          draggable: true,
+          map: this.map,
+          animation: google.maps.Animation.DROP,
+          position: latLng,
+        });
+
         this.markers.push(marker);
-        //alert(this.markers[this.markers.length-1].position);
-        var res = this.markers[this.markers.length-1].position.toString().split("(");
-        var res2= res[1].split(",");
-        //console.log(" lat::"+res2[0]);
-        var res3=res2[1].split(")")
-        //console.log("long::"+res3[0]);
-        this.lat = res2[0];
-        this.long = res3[0];
-      }); 
-    }).catch((error) => {
-      console.log('Error getting location', error);
-    });
+        //alert(this.markers[0].position)
+
+        marker.addListener("dragend", () => {
+          this.markers.push(marker);
+          //alert(this.markers[this.markers.length-1].position);
+          var res = this.markers[this.markers.length - 1].position
+            .toString()
+            .split("(");
+          var res2 = res[1].split(",");
+          //console.log(" lat::"+res2[0]);
+          var res3 = res2[1].split(")");
+          //console.log("long::"+res3[0]);
+          this.lat = res2[0];
+          this.long = res3[0];
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting location", error);
+      });
   }
 
-  registerSucursal(){
+  registerSucursal() {
     let name = this.sucursal_name;
     let address = this.direction;
     let telf = this.telf;
     let attention = this.fromHour + "-" + this.toHour;
     uid = name;
 
-    this.addLocation({
-      position : {
-        lat : Number(this.lat), 
-        lng : Number(this.long)
-      },
-      nombre : name,
-      direccion : address,
-      telefono : telf,
-      horario : attention,
-      imagen : this.urlImage
+    this.addLocation(
+      {
+        position: {
+          lat: Number(this.lat),
+          lng: Number(this.long),
+        },
+          nombre : name,
+          direccion : address,
+          telefono : telf,
+          horario : attention,
+          imagen : this.urlImage
     },uid);
 
     this.sucursal_name="";
@@ -136,18 +146,20 @@ export class MapsPage implements OnInit {
   handleFileInput(files: FileList) {
     this.fileToUpload = files.item(0);
   }
-  
+
   uploadImage() {
     let filename = this.fileToUpload.name;
     const fullPath = `sucursalesImages/${filename}`;
-    
+
     const fileref = this.fireStorage.ref(fullPath);
 
-    const customMetadata = { app: 'Upload image' };
+    const customMetadata = { app: "Upload image" };
     // Totally optional metadata
-    this.task = this.fireStorage.upload(fullPath, this.fileToUpload, { customMetadata });
+    this.task = this.fireStorage.upload(fullPath, this.fileToUpload, {
+      customMetadata,
+    });
     this.isUploading = true;
-    this.task.catch(res => {
+    this.task.catch((res) => {
       this.isUploading = false;
       console.log("Error uploading the file");
     });
@@ -183,7 +195,7 @@ export class MapsPage implements OnInit {
   async uploadDone() {
     const alert = await this.alertCtrl.create({
       message: "Image uploaded 😊",
-      buttons: ['Ok']
+      buttons: ["Ok"],
     });
     await alert.present();
   }
