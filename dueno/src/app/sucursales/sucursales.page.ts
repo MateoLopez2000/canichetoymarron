@@ -139,7 +139,7 @@ export class SucursalesPage implements OnInit {
   }
 
   getMotos() {
-    this.firestoreService.getData("lugares").subscribe((motosArray) => {
+    this.database.collection('Motos').valueChanges().subscribe((motosArray) => {
       this.motos = [];
       motosArray.forEach((moto: any) => {
         this.motos.push({
@@ -175,19 +175,5 @@ export class SucursalesPage implements OnInit {
     for (let window of this.infoWindows) {
       window.close();
     }
-  }
-  actualizarUbicaciones() {
-    this.firestoreService.getData("lugares").subscribe((motosArray) => {
-      this.motos = [];
-      motosArray.forEach((moto: any) => {
-        this.motos.push({
-          position: {
-            lat: Number(moto.latitud),
-            lng: Number(moto.longitud),
-          },
-          nombreDeMoto: moto.nombreDeMoto,
-        });
-      });
-    });
   }
 }
