@@ -34,4 +34,8 @@ export class AuthService {
       });
     });
   }
+
+  public getSucursalesData(collection) {
+    return this.db.collection(collection).valueChanges();
+  }
 }

@@ -1,6 +1,6 @@
 import {Component,OnInit,NgZone,ElementRef,ViewChild} from "@angular/core";
 import { Geolocation, Geoposition } from "@ionic-native/geolocation/ngx";
-import { NavController } from "@ionic/angular";
+import { IonSlides,NavController } from "@ionic/angular";
 import { GoogleMaps, MarkerOptions } from "@ionic-native/google-maps";
 import {AngularFirestoreDocument,AngularFirestore,} from "@angular/fire/firestore";
 import * as firebase from "firebase";
@@ -16,11 +16,15 @@ declare var google;
   styleUrls: ["./maps.page.scss"],
 })
 export class MapsPage implements OnInit {
+  @ViewChild(IonSlides) slides: IonSlides;
   map: any;
   lat: string;
   long: string;
   location: any;
   user: any;
+  infoWindow: any;
+  markers: MarkerOptions[] = [];
+  infoWindows: any = [];
 
   constructor(
     private geolocation: Geolocation,
@@ -31,6 +35,7 @@ export class MapsPage implements OnInit {
     private nativeGeocoder: NativeGeocoder,
     public auth: AuthService,
     public ngFireAuth: AngularFireAuth,
+    private firestoreService: AuthService
   ) {}
 
   ngOnInit() {
@@ -61,6 +66,7 @@ export class MapsPage implements OnInit {
         this.map.addListener("tilesloaded", () => {
           this.lat = this.map.center.lat();
           this.long = this.map.center.lng();
+          this.loadMarkers();
         });
       })
       .catch((error) => {
@@ -88,5 +94,69 @@ export class MapsPage implements OnInit {
           .catch((err) => console.log(err));
       });
     }});
+  }
+  //Add markers of sucursales 
+  addSucursalMaker(itemMarker: MarkerOptions) {
+    const marker = new google.maps.Marker({
+      position: { lat: itemMarker.position.lat, lng: itemMarker.position.lng },
+      map: this.map,
+      title: itemMarker.name,
+      text: itemMarker.address,
+      img: itemMarker.image,
+    });
+    return marker;
+  }
+  loadMarkers() {
+    this.getSucursales();
+    this.markers.forEach((marker) => {
+      const markerObj = this.addSucursalMaker(marker);
+      marker.markerObj = markerObj;
+      this.addInfoWindowToMarker(markerObj);
+    });
+  }
+  //Add slide cards 
+  async onSlideDidChange() {
+    const currentSlide = await this.slides.getActiveIndex();
+    const marker = this.markers[currentSlide];
+    this.map.panTo({ lat: marker.position.lat, lng: marker.position.lng });
+  }
+  //Get locations of sucursales
+  getSucursales() {
+    this.firestoreService.getSucursalesData("sucursales").subscribe((sucursalesArray) => {
+      this.markers = [];
+      sucursalesArray.forEach((sucursal: any) => {
+        this.markers.push({
+          position: {
+            lat: sucursal.position.lat,
+            lng: sucursal.position.lng,
+          },
+          name : sucursal.name,
+          address : sucursal.address,
+          telephone : sucursal.telephone,
+          attention : sucursal.attention,
+          imageURL : sucursal.imageURL
+        });
+      });
+    });
+  }
+  //Add info windows
+  addInfoWindowToMarker(marker) {
+    let infoWindowContent = "<b>" + marker.title + "</b><br/>" + marker.text;
+
+    let infoWindow = new google.maps.InfoWindow({
+      content: infoWindowContent,
+    });
+
+    marker.addListener("click", () => {
+      this.closeAllInfoWindows();
+      infoWindow.open(this.map, marker);
+    });
+    this.infoWindows.push(infoWindow);
+  }
+
+  closeAllInfoWindows() {
+    for (let window of this.infoWindows) {
+      window.close();
+    }
   }
 }
