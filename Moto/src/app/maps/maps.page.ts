@@ -6,6 +6,7 @@ import {AngularFirestoreDocument,AngularFirestore,} from "@angular/fire/firestor
 import * as firebase from "firebase";
 import {NativeGeocoder,NativeGeocoderResult, NativeGeocoderOptions,} from "@ionic-native/native-geocoder/ngx";
 import { AuthService } from "../services/auth.service";
+import { AngularFireAuth } from '@angular/fire/auth';
 
 declare var google;
 
@@ -20,6 +21,7 @@ export class MapsPage implements OnInit {
   lat: string;
   long: string;
   location: any;
+  user: any;
   infoWindow: any;
   markers: MarkerOptions[] = [];
   infoWindows: any = [];
@@ -31,13 +33,13 @@ export class MapsPage implements OnInit {
     private googleMaps: GoogleMaps,
     private database: AngularFirestore,
     private nativeGeocoder: NativeGeocoder,
-    private firestoreService: AuthService,
-    public auth: AuthService
+    public auth: AuthService,
+    public ngFireAuth: AngularFireAuth,
+    private firestoreService: AuthService
   ) {}
 
   ngOnInit() {
     this.loadMap();
-    this.onSubmit();
     this.checkTrackingUpdate();
   }
 
@@ -73,27 +75,19 @@ export class MapsPage implements OnInit {
     // alert('latitud' +this.lat+', longitud'+this.long )
   }
 
-  onSubmit() {
-    this.geolocation.getCurrentPosition().then((geposition: Geoposition) => {
-      let lat = geposition.coords.latitude.toString();
-      let long = geposition.coords.longitude.toString();
-      this.auth
-        .set_location("UPB", "-17.398797064290626", "-66.21835613799746")
-        .then((auth) => {
-          console.log(auth);
-        })
-        .catch((err) => console.log(err));
-    });
-  }
   checkTrackingUpdate() {
+    this.user = this.ngFireAuth.authState._subscribe;
+    this.ngFireAuth.authState.subscribe(res => {
+      this.user = res.email;
+    });
     this.database.collection("tracking").doc("update").valueChanges()
     .subscribe((val: any) => {if (val.actualizarBool=="true") {
       this.geolocation.getCurrentPosition().then((geposition: Geoposition) => {
         let lat = geposition.coords.latitude.toString();
         let long = geposition.coords.longitude.toString();
-        console.log(lat,long)
+        //console.log(lat,long)
         this.auth
-          .update_location("motoN", lat, long)
+          .update_location(this.user, lat, long)
           .then((auth) => {
             console.log(auth);
           })

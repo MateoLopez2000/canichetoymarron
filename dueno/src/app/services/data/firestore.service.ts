@@ -23,6 +23,15 @@ export class FirestoreService {
     });
   }
 
+  public insertMoto(collection, id, nombre) {
+    this.angularFirestore.doc(collection + '/' + id).set({ 
+      position: {
+        lat: 0,
+        lng: 0
+      },
+      nombreDeMoto: nombre,});
+  }
+
   public getData(collection) {
     return this.angularFirestore.collection(collection).valueChanges();
   }
