@@ -86,6 +86,7 @@ export class SucursalesPage implements OnInit {
       title: itemMarker.name,
       text: itemMarker.address,
       img: itemMarker.image,
+      icon : "../assets/icon/tienda.png"
     });
     return marker;
   }
