@@ -139,13 +139,13 @@ export class SucursalesPage implements OnInit {
   }
 
   getMotos() {
-    this.database.collection('Motos').valueChanges().subscribe((motosArray) => {
+    this.firestoreService.getData("Motos").subscribe((motosArray) => {
       this.motos = [];
       motosArray.forEach((moto: any) => {
         this.motos.push({
           position: {
-            lat: Number(moto.latitud),
-            lng: Number(moto.longitud),
+            lat: Number(moto.position.lat),
+            lng: Number(moto.position.lng),
           },
           nombreDeMoto: moto.nombreDeMoto
         });
