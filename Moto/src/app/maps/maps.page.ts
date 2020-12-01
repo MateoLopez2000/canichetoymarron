@@ -19,6 +19,8 @@ export class MapsPage implements OnInit {
   @ViewChild(IonSlides) slides: IonSlides;
   map: any;
   lat: string;
+  currentlat: string;
+  currentlong: string;
   long: string;
   location: any;
   user: any;
@@ -52,6 +54,7 @@ export class MapsPage implements OnInit {
           resp.coords.longitude
         );
 
+
         let mapOptions = {
           center: latLng,
           zoom: 15,
@@ -67,12 +70,12 @@ export class MapsPage implements OnInit {
           this.lat = this.map.center.lat();
           this.long = this.map.center.lng();
           this.loadMarkers();
+          this.addMarker(latLng);
         });
       })
       .catch((error) => {
         console.log("Error getting location", error);
       });
-    // alert('latitud' +this.lat+', longitud'+this.long )
   }
 
   checkTrackingUpdate() {
@@ -85,7 +88,7 @@ export class MapsPage implements OnInit {
       this.geolocation.getCurrentPosition().then((geposition: Geoposition) => {
         let lat = geposition.coords.latitude.toString();
         let long = geposition.coords.longitude.toString();
-        //console.log(lat,long)
+        //this.addMarker(geposition)
         this.auth
           .update_location(this.user, lat, long)
           .then((auth) => {
@@ -95,6 +98,15 @@ export class MapsPage implements OnInit {
       });
     }});
   }
+  addMarker(location) {
+    const marker = new google.maps.Marker({
+      position: location,
+      map: this.map,
+      title: "You are here",
+      icon : "../assets/icon/repartidor.png"
+    });
+    this.markers.push(marker);
+  }
   //Add markers of sucursales 
   addSucursalMaker(itemMarker: MarkerOptions) {
     const marker = new google.maps.Marker({
@@ -103,6 +115,7 @@ export class MapsPage implements OnInit {
       title: itemMarker.name,
       text: itemMarker.address,
       img: itemMarker.image,
+      icon : "../assets/icon/tienda.png"
     });
     return marker;
   }

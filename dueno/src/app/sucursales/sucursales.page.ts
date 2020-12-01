@@ -55,7 +55,6 @@ export class SucursalesPage implements OnInit {
         );
         this.lat = resp.coords.latitude.toString();
         this.long = resp.coords.longitude.toString();
-
         let mapOptions = {
           center: latLng,
           zoom: 15,
@@ -66,7 +65,6 @@ export class SucursalesPage implements OnInit {
           document.getElementById("map1"),
           mapOptions
         );
-
         this.map.addListener("tilesloaded", () => {
           this.lat = this.map.center.lat();
           this.long = this.map.center.lng();
@@ -141,6 +139,7 @@ export class SucursalesPage implements OnInit {
 
   getMotos() {
     this.firestoreService.getData("Motos").subscribe((motosArray) => {
+      this.clearMotoMarkers();
       this.motos = [];
       motosArray.forEach((moto: any) => {
         this.motos.push({
@@ -152,6 +151,11 @@ export class SucursalesPage implements OnInit {
         });
       });
     });
+  }
+  clearMotoMarkers() {
+    for (let i = 0; i < this.motos.length; i++) {
+      this.motos[i].map=null;
+    }
   }
   updateTracking() {
     this.firestoreService.trackingUpdate("true");
