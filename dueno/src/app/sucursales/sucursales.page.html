@@ -1,12 +1,18 @@
 <ion-header>
   <ion-toolbar  color ="secondary">
-    <div>
-      <ion-button id="MonitoreoMotosButton" (click)="updateTracking()">Refresh Motos</ion-button>
-    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" pullFactor="1" pullMin="300" pullMax="500" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Swipe Down para refrescar las ubicaciones"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+
   <div id="map1"></div>
   <ion-slides (ionSlideDidChange)="onSlideDidChange()">
     <ion-slide *ngFor="let marker of markers">

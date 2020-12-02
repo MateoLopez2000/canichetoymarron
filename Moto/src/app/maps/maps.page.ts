@@ -88,6 +88,7 @@ export class MapsPage implements OnInit {
       this.geolocation.getCurrentPosition().then((geposition: Geoposition) => {
         let lat = geposition.coords.latitude.toString();
         let long = geposition.coords.longitude.toString();
+        //console.log(lat,long);
         //this.addMarker(geposition)
         this.auth
           .update_location(this.user, lat, long)

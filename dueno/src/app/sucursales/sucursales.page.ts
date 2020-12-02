@@ -139,7 +139,6 @@ export class SucursalesPage implements OnInit {
 
   getMotos() {
     this.firestoreService.getData("Motos").subscribe((motosArray) => {
-      this.clearMotoMarkers();
       this.motos = [];
       motosArray.forEach((moto: any) => {
         this.motos.push({
@@ -152,14 +151,13 @@ export class SucursalesPage implements OnInit {
       });
     });
   }
-  clearMotoMarkers() {
-    for (let i = 0; i < this.motos.length; i++) {
-      this.motos[i].map=null;
-    }
-  }
-  updateTracking() {
+  doRefresh(event) {
     this.firestoreService.trackingUpdate("true");
     this.firestoreService.trackingUpdate("false");
+    this.loadMap();
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000);
   }
 
   addInfoWindowToMarker(marker) {
