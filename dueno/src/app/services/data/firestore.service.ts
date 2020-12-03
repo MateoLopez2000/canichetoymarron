@@ -23,13 +23,20 @@ export class FirestoreService {
     });
   }
 
-  public insertMoto(collection, id, nombre) {
+  public insertMoto(collection, id, nombre, rol) {
     this.angularFirestore.doc(collection + '/' + id).set({ 
       position: {
         lat: 0,
         lng: 0
       },
-      nombreDeMoto: nombre,});
+      nombreDeMoto: nombre,
+      estado: "disponible",
+      rol: rol,
+    });
+  }
+
+  public getRol(email) {
+    return this.angularFirestore.collection("Motos").doc(email).valueChanges();
   }
 
   public getData(collection) {
@@ -52,5 +59,8 @@ export class FirestoreService {
   }
   public getMotos(collection) {
     return this.angularFirestore.collection(collection).valueChanges();
+  }
+  public getEspecificMoto(collection, email) {
+    return this.angularFirestore.collection(collection).doc(email).valueChanges();
   }
 }
