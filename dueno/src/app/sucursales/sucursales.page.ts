@@ -206,6 +206,7 @@ export class SucursalesPage implements OnInit {
     let { latSucursal, lngSucursal } = this.getPositionSucursal(pedidoData.sucursal);
     let motoasignada = this.calculateNearestMoto(latSucursal, lngSucursal);
     this.firestoreService.updateData("pedidos", idPedido, { "moto": motoasignada });
+    this.firestoreService.updateData("Motos", motoasignada, { "estado": "ocupado" });
   }
   private getPositionSucursal(idsucursal) {
     let latSucursal;
