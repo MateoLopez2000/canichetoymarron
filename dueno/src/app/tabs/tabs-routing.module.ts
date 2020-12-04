@@ -21,7 +21,11 @@ const routes: Routes = [
         path: '',
         redirectTo: '/tabs/sucursales',
         pathMatch: 'full'
-      }
+      },
+      {
+        path: 'orders',
+        loadChildren: () => import('../orders/orders.module').then( m => m.OrdersPageModule)
+      },
     ]
   },
   {
