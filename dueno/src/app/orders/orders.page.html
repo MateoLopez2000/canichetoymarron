@@ -15,10 +15,14 @@
           <ion-col size="9">
             <ion-card-content class="ion-text-left">
               <ion-card-title>{{ pedido.id }}</ion-card-title>
-              <ion-badge item-end>{{ pedido.estado }}</ion-badge>
+              <ion-badge item-end [attr.color]="setBadgeColor(pedido.estado)">{{ pedido.estado }}</ion-badge>
               <ion-row ion-row class="ion-align-items-center">
-                <ion-icon name="bicycle-outline"></ion-icon>
-                <ion-card-subtitle>{{ pedido.moto }}</ion-card-subtitle>
+                <ion-col size="3">
+                  <ion-icon size="small" name="bicycle-outline"></ion-icon>
+                </ion-col>
+                <ion-col size="9">
+                  <ion-card-subtitle>{{ pedido.moto }}</ion-card-subtitle>
+                </ion-col>
               </ion-row>
             </ion-card-content>
         </ion-col>

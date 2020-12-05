@@ -9,6 +9,7 @@ import { FirestoreService } from "../services/data/firestore.service";
 export class OrdersPage implements OnInit {
 
   pedidos: any = [];
+  badgecolor: string;
 
   constructor(
     private firestoreService: FirestoreService
@@ -46,5 +47,17 @@ export class OrdersPage implements OnInit {
   }
   getDriverName(user: string){
     return user.split('@');
+  }
+  setBadgeColor(value: string) {
+    switch (true) {
+      case (value === "Listo para recoger"):
+        return 'tertiary';
+      case (value === "Entregado"):
+        return 'success';
+      case (value === "Cancelado"):
+        return 'danger';
+      default:
+        return 'warning';
+    }
   }
 }
