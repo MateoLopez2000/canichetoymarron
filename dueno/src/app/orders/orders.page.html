@@ -1,9 +1,28 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>orders</ion-title>
+    <ion-title>PEDIDOS</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
-
+  <div class="slides ion-margin-bottom">
+    <ion-card *ngFor="let pedido of pedidos">
+      <ion-row class="ion-align-items-center">
+        <ion-col size="3">
+          <div>
+            <img src="https://www.flaticon.com/svg/static/icons/svg/3770/3770612.svg">
+          </div>
+        </ion-col>
+          <ion-col size="9">
+            <ion-card-content class="ion-text-left">
+              <ion-card-title>{{ pedido.id }}</ion-card-title>
+              <ion-badge item-end>{{ pedido.estado }}</ion-badge>
+              <ion-row ion-row class="ion-align-items-center">
+                <ion-icon name="bicycle-outline"></ion-icon>
+                <ion-card-subtitle>{{ pedido.moto }}</ion-card-subtitle>
+              </ion-row>
+            </ion-card-content>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </div>
 </ion-content>
