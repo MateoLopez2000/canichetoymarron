@@ -61,13 +61,8 @@ export class GestionPedidoPage implements OnInit {
           const markerObj = this.addMaker(moto, map,  "../assets/icon/repartidor.png");
           moto.markerObj = markerObj;    
 
-          // let pedido =  this.obtener_pedido_por_moto(moto);
-          this.pedidos.forEach((pedido) => {
-            if(pedido.moto == moto.id){
-              const p_markerObj = this.addMaker(pedido, map, "../assets/icon/home.svg");
-              pedido.p_markerObj = markerObj; 
-            }      
-          });
+          this.obtener_pedido_por_moto(moto.id,map);
+         
 
         }); 
       }
@@ -127,12 +122,11 @@ export class GestionPedidoPage implements OnInit {
     });
   }
 
-  obtener_pedido_por_moto(id: any){
-  
+  obtener_pedido_por_moto(id: any, map){
     this.pedidos.forEach((pedido) => {
-      console.log(pedido);
       if(pedido.moto  == id){
-        return pedido;
+        const p_markerObj = this.addMaker(pedido, map, "../assets/icon/home.png");
+        pedido.p_markerObj = p_markerObj; 
       }
     });
   }
