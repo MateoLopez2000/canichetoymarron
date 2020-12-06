@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 import { FirestoreService } from "../services/data/firestore.service";
 
 @Component({
@@ -45,9 +46,11 @@ export class OrdersPage implements OnInit {
       });
     });
   }
-  getDriverName(user: string){
+
+  getDriverName(user: string) {
     return user.split('@');
   }
+
   setBadgeColor(value: string) {
     switch (true) {
       case (value === "Listo para recoger"):
@@ -59,5 +62,8 @@ export class OrdersPage implements OnInit {
       default:
         return 'warning';
     }
+  }
+  checkOrderState() {
+    console.log("test");
   }
 }

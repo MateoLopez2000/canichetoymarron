@@ -3,7 +3,7 @@
     height: 100%;
 }
 ion-slides {
-  height: 15%;
+  height: 18%;
   position: absolute;
   bottom: 0px;
   width: 100%;
@@ -11,4 +11,11 @@ ion-slides {
 }
 #MonitoreoMotosButton{
   right: 100%;
+}
+
+ion-card {
+  width: 95%;
+  box-shadow: none;
+  border-radius: 14px;
+  background: rgba(255,255,255,.8);
 }
