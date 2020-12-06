@@ -1,9 +1,29 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>pedidos</ion-title>
+    <ion-title>Pedido</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-card *ngIf='miPedido; else sinPedido'>
+    <ion-card-header>
+      <ion-card-title>{{ miPedido.pedidoId }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <h2>Fecha y Hora: {{ miPedido.fechahorapedido }}</h2>
+      <h2>Productos: {{ miPedido.productos }}</h2>
+      <h2>Nombre: {{ miPedido.nombre }}</h2>
+      <h2>Nit: {{ miPedido.nit }}</h2>
+      <h2>Dirección: {{ miPedido.direccion }}</h2>
+      <h2>Teléfono: {{ miPedido.telefono }}</h2>
+      <h2>Sucursal: {{ miPedido.sucursal }}</h2>
+    </ion-card-content>
 
+    <div style="text-align: center;">
+      <ion-button size="medium" style="width: 100%;" color="success" (click)="entregado(miPedido.pedidoId)">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>Entregado
+      </ion-button>     
+    </div>
+  </ion-card>
+  <ng-template #sinPedido><h4> No tienes asignado ningún pedido. </h4></ng-template>
 </ion-content>
