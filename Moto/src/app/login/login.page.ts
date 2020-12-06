@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 
 import { AngularFireAuth } from '@angular/fire/auth'
 import { AlertController } from '@ionic/angular';
+import { AngularFirestore } from "@angular/fire/firestore";
+
 
 @Component({
   selector: 'app-login',
@@ -17,6 +19,7 @@ export class LoginPage implements OnInit {
 
   constructor(
     private router: Router,
+    private database: AngularFirestore, 
     public ngFireAuth: AngularFireAuth,
     private alertCtrl:AlertController
     ) { }
@@ -28,7 +31,8 @@ export class LoginPage implements OnInit {
     await this.ngFireAuth.signInWithEmailAndPassword(this.user.email, this.user.password).
     then(
       ()=>{
-      this.router.navigate(['/tabs/map']);
+        this.database.collection("Motos").doc(this.user.email).update({estado: "disponible"});
+        this.router.navigate(['/tabs/map']);
       },
       async error=> {
         const alert = await this.alertCtrl.create({

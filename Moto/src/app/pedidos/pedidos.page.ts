@@ -37,6 +37,7 @@ export class PedidosPage implements OnInit {
   }
   entregado(idPedido) {
     this.database.collection("pedidos").doc(idPedido).update({estado: "Entregado"});
+    this.miPedido = null;
     this.database.collection("Motos").doc(this.user).update({estado: "disponible"});
   }
 
