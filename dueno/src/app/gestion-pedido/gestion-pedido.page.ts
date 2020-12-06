@@ -135,7 +135,8 @@ export class GestionPedidoPage implements OnInit {
       if(pedido.moto  == this.motos[index].id){
         const p_markerObj = this.addMaker(pedido, map, "../assets/icon/home1.png");
         pedido.p_markerObj = p_markerObj;
-    
+        (document.getElementsByClassName("idPedido")[index] as HTMLElement).innerHTML = " \t " + pedido.id ;
+
         this.getRoute(this.motos[index].LatLngMoto, pedido.LatLngPedido, index);
       }
     });
@@ -157,17 +158,21 @@ export class GestionPedidoPage implements OnInit {
       });  
 
   }
-  
+
   computeTotalDistance(result, index ) {
     let total = 0;
+    let time = 0;
     const myroute = result.routes[0];
-  
+    
     for (let i = 0; i < myroute.legs.length; i++) {
       total += myroute.legs[i].distance.value;
+      time += myroute.legs[i].duration.value;
     }
+    
+    time = parseInt((time / 60).toString());
     total = total / 1000;
-    (document.getElementsByClassName("total")[index] as HTMLElement).innerHTML = "A " +  total + " km. de Distancia del Pedido";
-    // console.log(total + " km. ");
+    (document.getElementsByClassName("total")[index] as HTMLElement).innerHTML = "A " +  total + " km. de Distancia del Pedido.  ( " + time + " min )";
+    
   }
 }
   
