@@ -54,9 +54,8 @@ export class GestionPedidoPage implements OnInit {
       
         let mapOptions = {
           center: moto.LatLngMoto,
-          zoom: 11,
+          zoom: 12,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
-          mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU}
         }
 
         let map = new google.maps.Map(this.maps[i], mapOptions)  
@@ -69,7 +68,7 @@ export class GestionPedidoPage implements OnInit {
           const markerObj = this.addMaker(moto, map,  "../assets/icon/repartidor.png");
           moto.markerObj = markerObj;    
 
-          this.obtener_pedido_por_moto(moto.id, map, moto.LatLngMoto, index);
+          this.obtener_pedido_por_moto(map, index);
         }); 
 
       }
@@ -131,13 +130,13 @@ export class GestionPedidoPage implements OnInit {
     });
   }
 
-  obtener_pedido_por_moto(id: any, map: any, motoLocation: String, index: any){
+  obtener_pedido_por_moto( map: any,  index: any){
     this.pedidos.forEach((pedido) => {
-      if(pedido.moto  == id){
+      if(pedido.moto  == this.motos[index].id){
         const p_markerObj = this.addMaker(pedido, map, "../assets/icon/home1.png");
         pedido.p_markerObj = p_markerObj;
-
-        this.getRoute(motoLocation, pedido.LatLngPedido, index);
+    
+        this.getRoute(this.motos[index].LatLngMoto, pedido.LatLngPedido, index);
       }
     });
   }
@@ -149,12 +148,26 @@ export class GestionPedidoPage implements OnInit {
         optimizeWaypoints: true,
         travelMode: google.maps.TravelMode.DRIVING,
       }, (response, status) => {
-        if (status === google.maps.DirectionsStatus.OK) {
+        if (status === "OK") {
           this.directionsRenderers[index].setDirections(response);
+          this.computeTotalDistance(this.directionsRenderers[index].getDirections(), index);
         } else {
-          console.log("Direction Error : " + status );
-      }
+         console.log("Direction Error : " + status );
+        }
       });  
+
+  }
+  
+  computeTotalDistance(result, index ) {
+    let total = 0;
+    const myroute = result.routes[0];
+  
+    for (let i = 0; i < myroute.legs.length; i++) {
+      total += myroute.legs[i].distance.value;
+    }
+    total = total / 1000;
+    (document.getElementsByClassName("total")[index] as HTMLElement).innerHTML = "A " +  total + " km. de Distancia del Pedido";
+    // console.log(total + " km. ");
   }
 }
   
