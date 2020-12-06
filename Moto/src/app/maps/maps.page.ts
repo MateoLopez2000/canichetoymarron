@@ -27,6 +27,9 @@ export class MapsPage implements OnInit {
   infoWindow: any;
   markers: MarkerOptions[] = [];
   infoWindows: any = [];
+  clientAcept: [];
+  pedido: MarkerOptions[] = [];
+  OrderCurrent: "";
 
   constructor(
     private geolocation: Geolocation,
@@ -73,6 +76,8 @@ export class MapsPage implements OnInit {
           this.long = this.map.center.lng();
           this.loadMarkers();
           this.addMarker(latLng);
+          this.showClientLocation();
+          //this.loadOrder("PEDIDO8");
         });
       })
       .catch((error) => {
@@ -204,11 +209,23 @@ export class MapsPage implements OnInit {
           handler: () => {
             this.database.collection("pedidos").doc(idPedido).update({estado: "En camino"});
             this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
+            this.OrderCurrent = idPedido;
+            //this.showClientLocation(idPedido);
           }
         }
       ]
     });
-
     await alert.present();
   }
+  showClientLocation() {
+    this.database.collection("pedidos").doc(this.OrderCurrent).valueChanges().subscribe((pedido: any) => {
+      console.log(pedido.position);
+      const order = new google.maps.Marker({
+       // position: { lat: pedido.position.lat, lng: pedido.position.lng },
+       position: { lat: -17.34, lng: -66.18 }, 
+       map: this.map,
+      });
+      this.pedido.push(order);
+    });
+   }
 }

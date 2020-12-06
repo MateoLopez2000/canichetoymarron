@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AngularFireAuth } from '@angular/fire/auth';
-
+//import { MapsPage } from '../maps/maps.page';
 @Component({
   selector: 'app-pedidos',
   templateUrl: './pedidos.page.html',
@@ -14,6 +14,7 @@ export class PedidosPage implements OnInit {
 
   constructor(
     private database: AngularFirestore, 
+   //private mapsPage: MapsPage,
     public ngFireAuth: AngularFireAuth
     ) { }
 
@@ -39,6 +40,7 @@ export class PedidosPage implements OnInit {
     this.database.collection("pedidos").doc(idPedido).update({estado: "Entregado"});
     this.miPedido = null;
     this.database.collection("Motos").doc(this.user).update({estado: "disponible"});
+    //this.mapsPage.showClientLocation(idPedido);
   }
 
 }
