@@ -8,7 +8,6 @@ const routes: Routes = [
     path: 'password-recovery',
     loadChildren: () => import('./password-recovery/password-recovery.module').then( m => m.PasswordRecoveryPageModule)
   },
-
 ];
 
 @NgModule({
