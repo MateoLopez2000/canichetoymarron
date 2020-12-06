@@ -1,3 +1,4 @@
+import { NumberValueAccessor } from '@angular/forms';
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
 import { NavController } from '@ionic/angular';
@@ -18,10 +19,8 @@ export class GestionPedidoPage implements OnInit {
   motos: MarkerOptions[] = [];
   maps: any;
   pedidos:  MarkerOptions[] = [];
-  // directionsRenderer =  new google.maps.DirectionsRenderer();
-  // directionsService =  new google.maps.DirectionsService(); 
-  directionsRenderer ;
-  directionsService ;
+  directionsRenderers = [];
+  directionsServices = [];
 
   constructor(
     private geolocation: Geolocation,
@@ -41,13 +40,15 @@ export class GestionPedidoPage implements OnInit {
   loadMaps() {
 
     this.geolocation.getCurrentPosition().then((res) => {
+      
       this.maps = document.getElementsByClassName("maps");
      
-      for (var i = 0; i < this.maps.length; i++) {
-        this.directionsService =  new google.maps.DirectionsService();
-        this.directionsRenderer =  new google.maps.DirectionsRenderer();
+      for (var i = 0; i < this.maps.length; i++) {      
+        this.directionsServices[i] =  new google.maps.DirectionsService();
+        this.directionsRenderers[i] =  new google.maps.DirectionsRenderer();
 
         let moto = this.motos[i];   
+        let index = i;
         this.lat = moto.position.lat;
         this.lng = moto.position.lng;
       
@@ -59,17 +60,18 @@ export class GestionPedidoPage implements OnInit {
         }
 
         let map = new google.maps.Map(this.maps[i], mapOptions)  
-        this.directionsRenderer.setMap(map);
-      
+        this.directionsRenderers[i].setMap(map);
+    
         map.addListener('tilesloaded', () => {
           this.lat = map.center.lat()
           this.lng = map.center.lng()
 
           const markerObj = this.addMaker(moto, map,  "../assets/icon/repartidor.png");
           moto.markerObj = markerObj;    
-          
-          this.obtener_pedido_por_moto(moto.id, map, moto.LatLngMoto);
+
+          this.obtener_pedido_por_moto(moto.id, map, moto.LatLngMoto, index);
         }); 
+
       }
     }).catch((error) => {
       console.log('Error getting location', error);
@@ -129,39 +131,30 @@ export class GestionPedidoPage implements OnInit {
     });
   }
 
-  obtener_pedido_por_moto(id: any, map: any, motoLocation: String){
+  obtener_pedido_por_moto(id: any, map: any, motoLocation: String, index: any){
     this.pedidos.forEach((pedido) => {
       if(pedido.moto  == id){
         const p_markerObj = this.addMaker(pedido, map, "../assets/icon/home1.png");
         pedido.p_markerObj = p_markerObj;
-        this.getRoute(motoLocation, pedido.LatLngPedido);
+
+        this.getRoute(motoLocation, pedido.LatLngPedido, index);
       }
     });
   }
 
-  private getRoute(start: String, end: String) {
-    console.log(" S " + start + " E " + end);
-      this.directionsService.route({
-      origin: start,
-      destination: end,
-      optimizeWaypoints: true,
-      travelMode: google.maps.TravelMode.DRIVING,
-    }, (response, status) => {
-      if (status === google.maps.DirectionsStatus.OK) {
-        this.directionsRenderer.setDirections(response);
-      } else {
-        console.log("Direction Error : " + status );
+  private getRoute(start: String, end: String, index: any) {
+      this.directionsServices[index].route({
+        origin: start,
+        destination: end,
+        optimizeWaypoints: true,
+        travelMode: google.maps.TravelMode.DRIVING,
+      }, (response, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          this.directionsRenderers[index].setDirections(response);
+        } else {
+          console.log("Direction Error : " + status );
       }
-      // var isLocationOnEdge = google.maps.geometry.poly.isLocationOnEdge;
-      // var path = response.routes[0].overview_path;
-      // for (var i = 0; i < this.motos.length; i++) {
-      // if (isLocationOnEdge(start,path))
-          // {
-              // console.log("Its in!")
-          // }
-        // }
-      });
-       
+      });  
   }
 }
   
