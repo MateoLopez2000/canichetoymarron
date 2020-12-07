@@ -28,8 +28,8 @@ export class MapsPage implements OnInit {
   markers: MarkerOptions[] = [];
   infoWindows: any = [];
   clientAcept: [];
-  pedido: MarkerOptions[] = [];
-  OrderCurrent: "";
+  orders: MarkerOptions[] = [];
+  ordersCurrent: any[] = [];
 
   constructor(
     private geolocation: Geolocation,
@@ -76,7 +76,7 @@ export class MapsPage implements OnInit {
           this.long = this.map.center.lng();
           this.loadMarkers();
           this.addMarker(latLng);
-          this.showClientLocation();
+          this.loadClientLocation();
           //this.loadOrder("PEDIDO8");
         });
       })
@@ -209,23 +209,30 @@ export class MapsPage implements OnInit {
           handler: () => {
             this.database.collection("pedidos").doc(idPedido).update({estado: "En camino"});
             this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
-            this.OrderCurrent = idPedido;
-            //this.showClientLocation(idPedido);
+            this.addClientLocation(idPedido);
           }
         }
       ]
     });
     await alert.present();
   }
-  showClientLocation() {
-    this.database.collection("pedidos").doc(this.OrderCurrent).valueChanges().subscribe((pedido: any) => {
-      console.log(pedido.position);
+  addClientLocation(idPedido) {
+    this.ordersCurrent.push(idPedido);
+   }
+   showClientLocation(idPedido) {
+    this.database.collection("pedidos").doc(idPedido).valueChanges().subscribe((pedido: any) => {
       const order = new google.maps.Marker({
-       // position: { lat: pedido.position.lat, lng: pedido.position.lng },
-       position: { lat: -17.34, lng: -66.18 }, 
+      position: { lat: Number(pedido.position.lat), lng: Number(pedido.position.lng) },
+       //position: { lat: -17.34, lng: -66.18 }, 
        map: this.map,
+       icon : "../assets/icon/alfiler.png"
       });
-      this.pedido.push(order);
+      //this.orders.push(order);
     });
+   }
+   loadClientLocation() {
+     this.ordersCurrent.forEach(order => {
+       this.showClientLocation(order);
+     })
    }
 }
