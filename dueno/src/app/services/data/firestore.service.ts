@@ -1,8 +1,6 @@
 import { Injectable } from "@angular/core";
 
 import { AngularFirestore } from "@angular/fire/firestore";
-import { Marker, MarkerOptions } from "@ionic-native/google-maps";
-import { truncateSync } from 'fs';
 
 @Injectable({
   providedIn: "root",
