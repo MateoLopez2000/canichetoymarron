@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 
 import { AngularFireAuth } from '@angular/fire/auth'
 import { AlertController } from '@ionic/angular';
-import { AngularFirestore } from "@angular/fire/firestore";
-
+import { AuthService } from '../services/auth.service';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +21,8 @@ export class LoginPage implements OnInit {
     private router: Router,
     private database: AngularFirestore, 
     public ngFireAuth: AngularFireAuth,
-    private alertCtrl:AlertController
+    private alertCtrl:AlertController,
+    private firestoreService: AuthService,
     ) { }
 
   ngOnInit() {
@@ -33,6 +34,7 @@ export class LoginPage implements OnInit {
       ()=>{
         this.database.collection("Motos").doc(this.user.email).update({estado: "disponible"});
         this.router.navigate(['/tabs/map']);
+        this.verifyFirstLogin();
       },
       async error=> {
         const alert = await this.alertCtrl.create({
@@ -44,6 +46,18 @@ export class LoginPage implements OnInit {
         await alert.present();
       }
     )
+  }
+  verifyFirstLogin(){
+    this.firestoreService.getEspecificMoto("Motos", this.user.email).subscribe((moto: any) => {
+      if (moto.flogin === true) {
+        this.router.navigate(['/password-recovery']); 
+        this.user.email= '';
+        this.user.password= '';
+        this.ngFireAuth.signOut();
+      } else if (this.user.email !== '') {
+        this.router.navigate(['/tabs/map']);
+      }
+    });
   }
   async resetPassword() {
     this.router.navigate(['/password-recovery']);

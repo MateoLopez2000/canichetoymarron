@@ -18,6 +18,10 @@ const routes: Routes = [
         loadChildren: () => import('../sucursales/sucursales.module').then(sucursal=>sucursal.SucursalesPageModule)
       },
       {
+        path: 'register',
+        loadChildren: () => import('../register/register.module').then(m => m.RegisterPageModule)
+      },
+      {
         path: '',
         redirectTo: '/tabs/sucursales',
         pathMatch: 'full'

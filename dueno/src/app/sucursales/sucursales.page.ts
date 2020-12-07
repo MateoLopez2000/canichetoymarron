@@ -7,8 +7,6 @@ import { Observable } from "rxjs";
 import * as firebase from "firebase";
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions, } from "@ionic-native/native-geocoder/ngx";
 import { FirestoreService } from "../services/data/firestore.service";
-import { tick } from "@angular/core/testing";
-import { IfStmt } from '@angular/compiler';
 declare var google;
 //let uid = 'SUCURSAL TEST';
 
@@ -161,12 +159,10 @@ export class SucursalesPage implements OnInit {
     });
   }
   doRefresh(event) {
-    this.firestoreService.trackingUpdate("true");
-    this.firestoreService.trackingUpdate("false");
     this.loadMap();
     setTimeout(() => {
       event.target.complete();
-    }, 1000);
+    }, 100);
   }
   getPedidos() {
     this.firestoreService.getPedidos().subscribe((pedidosList) => {

@@ -29,6 +29,8 @@ export class MapsPage implements OnInit {
   infoWindows: any = [];
   clientAcept: [];
   orders: MarkerOptions[] = [];
+  isTracking = false;
+  watch = null;
 
   constructor(
     private geolocation: Geolocation,
@@ -48,8 +50,13 @@ export class MapsPage implements OnInit {
     this.checkTrackingUpdate();
     this.listenNewOrder();
     //this.showClientLocation();
+    //this.user="andres@gmail.com"
+    this.user = this.ngFireAuth.authState._subscribe;
+    this.ngFireAuth.authState.subscribe(res => {
+      this.user = res.email;
+      this.startTracking();
+    });
   }
-
   loadMap() {
     this.geolocation
       .getCurrentPosition()
@@ -58,8 +65,6 @@ export class MapsPage implements OnInit {
           resp.coords.latitude,
           resp.coords.longitude
         );
-
-
         let mapOptions = {
           center: latLng,
           zoom: 15,
@@ -88,27 +93,13 @@ export class MapsPage implements OnInit {
         console.log("Error getting location", error);
       });
   }
-
-  checkTrackingUpdate() {
-    this.user = this.ngFireAuth.authState._subscribe;
-    this.ngFireAuth.authState.subscribe(res => {
-      this.user = res.email;
-    });
-    this.database.collection("tracking").doc("update").valueChanges()
-    .subscribe((val: any) => {if (val.actualizarBool=="true") {
-      this.geolocation.getCurrentPosition().then((geposition: Geoposition) => {
-        let lat = geposition.coords.latitude.toString();
-        let long = geposition.coords.longitude.toString();
-        //console.log(lat,long);
-        //this.addMarker(geposition)
-        this.auth
-          .update_location(this.user, lat, long)
-          .then((auth) => {
-            console.log(auth);
-          })
-          .catch((err) => console.log(err));
-      });
-    }});
+  startTracking() {
+    this.isTracking = true;
+    this.watch = this.geolocation.watchPosition();
+    this.watch.subscribe((data)=>{
+      this.auth
+          .update_location(this.user, data.coords.latitude, data.coords.longitude)
+    })
   }
   addMarker(location) {
     const marker = new google.maps.Marker({
