@@ -29,7 +29,6 @@ export class MapsPage implements OnInit {
   infoWindows: any = [];
   clientAcept: [];
   orders: MarkerOptions[] = [];
-  orderCurrent = "";
 
   constructor(
     private geolocation: Geolocation,
@@ -77,7 +76,7 @@ export class MapsPage implements OnInit {
           this.long = this.map.center.lng();
           this.loadMarkers();
           this.addMarker(latLng);
-          this.showClientLocation();
+          //this.showClientLocation();
           //this.loadOrder("PEDIDO8");
         });
       })
@@ -210,7 +209,6 @@ export class MapsPage implements OnInit {
           handler: () => {
             this.database.collection("pedidos").doc(idPedido).update({estado: "En camino"});
             this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
-            this.orderCurrent = idPedido;
           }
         }
       ]
@@ -218,15 +216,17 @@ export class MapsPage implements OnInit {
     await alert.present();
   }
   showClientLocation() {
-    if (this.orderCurrent != "") {
-      this.database.collection("pedidos").doc(this.orderCurrent).valueChanges().subscribe((pedido: any) => {
-        console.log(pedido.position);
-        const order = new google.maps.Marker({
-        position: { lat: Number(pedido.position.lat), lng: Number(pedido.position.lng) },
-        map: this.map,
-        icon : "../assets/icon/alfiler.png"
+      this.database.collection("pedidos").valueChanges({ idField: 'pedidoId' })
+      .subscribe((pedidos: any) => {
+        pedidos.forEach(pedido => {
+          if (pedido.estado == "En camino" && pedido.moto == this.user) {
+            const order = new google.maps.Marker({
+              position: { lat: Number(pedido.position.lat), lng: Number(pedido.position.lng) },
+              map: this.map,
+              icon : "../assets/icon/alfiler.png"
+              });
+          }
         });
-      });
-    }
+      })
    }
 }
