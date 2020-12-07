@@ -18,6 +18,10 @@ const routes: Routes = [
         loadChildren: () => import('../sucursales/sucursales.module').then(sucursal=>sucursal.SucursalesPageModule)
       },
       {
+        path: 'gestion-pedido',
+        loadChildren: () => import('../gestion-pedido/gestion-pedido.module').then( pedido => pedido.GestionPedidoPageModule)
+       },
+      {
         path: 'register',
         loadChildren: () => import('../register/register.module').then(m => m.RegisterPageModule)
       },
