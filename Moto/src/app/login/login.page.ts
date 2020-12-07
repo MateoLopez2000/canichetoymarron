@@ -19,6 +19,7 @@ export class LoginPage implements OnInit {
 
   constructor(
     private router: Router,
+    private database: AngularFirestore, 
     public ngFireAuth: AngularFireAuth,
     private alertCtrl:AlertController,
     private firestoreService: AuthService,
@@ -31,6 +32,8 @@ export class LoginPage implements OnInit {
     await this.ngFireAuth.signInWithEmailAndPassword(this.user.email, this.user.password).
     then(
       ()=>{
+        this.database.collection("Motos").doc(this.user.email).update({estado: "disponible"});
+        this.router.navigate(['/tabs/map']);
         this.verifyFirstLogin();
       },
       async error=> {

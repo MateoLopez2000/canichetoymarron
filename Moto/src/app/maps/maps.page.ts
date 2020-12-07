@@ -1,6 +1,6 @@
 import {Component,OnInit,NgZone,ElementRef,ViewChild} from "@angular/core";
 import { Geolocation, Geoposition } from "@ionic-native/geolocation/ngx";
-import { IonSlides,NavController } from "@ionic/angular";
+import { IonSlides,NavController, AlertController } from "@ionic/angular";
 import { GoogleMaps, MarkerOptions } from "@ionic-native/google-maps";
 import {AngularFirestoreDocument,AngularFirestore,} from "@angular/fire/firestore";
 import * as firebase from "firebase";
@@ -27,6 +27,8 @@ export class MapsPage implements OnInit {
   infoWindow: any;
   markers: MarkerOptions[] = [];
   infoWindows: any = [];
+  clientAcept: [];
+  orders: MarkerOptions[] = [];
   isTracking = false;
   watch = null;
 
@@ -39,11 +41,15 @@ export class MapsPage implements OnInit {
     private nativeGeocoder: NativeGeocoder,
     public auth: AuthService,
     public ngFireAuth: AngularFireAuth,
-    private firestoreService: AuthService
+    private firestoreService: AuthService,
+    private alertController: AlertController
   ) {}
 
   ngOnInit() {
     this.loadMap();
+    this.checkTrackingUpdate();
+    this.listenNewOrder();
+    //this.showClientLocation();
     //this.user="andres@gmail.com"
     this.user = this.ngFireAuth.authState._subscribe;
     this.ngFireAuth.authState.subscribe(res => {
@@ -70,11 +76,17 @@ export class MapsPage implements OnInit {
           mapOptions
         );
 
+        this.showClientLocation();
+        this.loadMarkers();
+        this.addMarker(latLng);
+
         this.map.addListener("tilesloaded", () => {
           this.lat = this.map.center.lat();
           this.long = this.map.center.lng();
           this.loadMarkers();
           this.addMarker(latLng);
+          this.showClientLocation();
+          //this.loadOrder("PEDIDO8");
         });
       })
       .catch((error) => {
@@ -162,5 +174,60 @@ export class MapsPage implements OnInit {
     for (let window of this.infoWindows) {
       window.close();
     }
+  }
+  
+  listenNewOrder() {
+    this.database.collection("pedidos").valueChanges({ idField: 'pedidoId' })
+    .subscribe((pedidos: any) => {
+      pedidos.forEach(pedido => {
+        if(pedido.moto == this.user && pedido.estado == "Listo para recoger") {
+          this.showAlert(pedido.pedidoId, pedido.direccion);
+        }      
+      });
+    })
+  }
+
+  async showAlert(idPedido, direccionPedido) {
+    const alert = await this.alertController.create({
+      header: 'Nuevo pedido!',
+      subHeader: 'Direccion de entrega: '+direccionPedido,
+      message: '¿Desea aceptar el pedido?',
+      buttons:  [
+        {
+          text: 'Rechazar',
+          handler: () => {
+            this.database.collection("pedidos").doc(idPedido).update({estado: "Pendiente"});
+          }
+        },
+        {
+          text: 'Aceptar',
+          handler: () => {
+            this.database.collection("pedidos").doc(idPedido).update({estado: "En camino"});
+            this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+  showClientLocation() {
+      this.database.collection("pedidos").valueChanges({ idField: 'pedidoId' })
+      .subscribe((pedidos: any) => {
+        pedidos.forEach(pedido => {
+          if (pedido.estado == "En camino" && pedido.moto == this.user) {
+            const order = new google.maps.Marker({
+              position: { lat: Number(pedido.position.lat), lng: Number(pedido.position.lng) },
+              map: this.map,
+              icon : "../assets/icon/alfiler.png"
+              });
+          }
+        });
+      })
+   }
+   doRefresh(event) {
+    this.loadMap();
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000);
   }
 }
