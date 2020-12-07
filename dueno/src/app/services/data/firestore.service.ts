@@ -40,7 +40,23 @@ export class FirestoreService {
   public getRol(email) {
     return this.angularFirestore.collection("Motos").doc(email).valueChanges();
   }
-
+  public insertPedido(id) {
+    this.angularFirestore.doc("pedidos" + '/' + id).set({ 
+      position: {
+        lat: "-17.34",
+        lng: "-66.18",
+      },
+      estado: "Listo para recoger",
+      direccion: "",
+      fechahorapedido: "",
+      nit: "",
+      moto: "",
+      nombre: "",
+      productos: "",
+      sucursal: "Suc1",
+      telefono: "",
+      total: ""});
+  }
   public getData(collection) {
     return this.angularFirestore.collection(collection).valueChanges();
   }
@@ -49,7 +65,9 @@ export class FirestoreService {
       actualizarBool: updateBool,
     });
   }
-
+  public getPedidos() {
+    return this.angularFirestore.collection("pedidos").snapshotChanges();
+  }
   public deleteData(sucursal) {
     return this.angularFirestore.doc("sucursales/" + sucursal).delete();
   }
@@ -57,8 +75,8 @@ export class FirestoreService {
   public updateData(collection, id, data) {
     return this.angularFirestore.collection(collection).doc(id).update(data);
   }
-  public getMotos(collection) {
-    return this.angularFirestore.collection(collection).valueChanges();
+  public getMotos() {
+    return this.angularFirestore.collection("Motos").snapshotChanges();
   }
   public getEspecificMoto(collection, email) {
     return this.angularFirestore.collection(collection).doc(email).valueChanges();
