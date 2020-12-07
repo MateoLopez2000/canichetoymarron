@@ -14,7 +14,6 @@ export class LoginPage implements OnInit {
     email: '',
     password: ''
   };
-  incomminglog: any;
 
   constructor(
     private router: Router,

@@ -38,4 +38,12 @@ export class AuthService {
   public getSucursalesData(collection) {
     return this.db.collection(collection).valueChanges();
   }
+  public getEspecificMoto(collection, email) {
+    return this.db.collection(collection).doc(email).valueChanges();
+  }
+  public updateEspecificlogin(collection, email) {
+    this.db.collection(collection).doc(email).update({
+      flogin: false,
+    });
+  }
 }

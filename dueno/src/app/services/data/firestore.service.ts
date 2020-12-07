@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Marker, MarkerOptions } from "@ionic-native/google-maps";
+import { truncateSync } from 'fs';
 
 @Injectable({
   providedIn: "root",
@@ -30,8 +31,9 @@ export class FirestoreService {
         lng: 0
       },
       nombreDeMoto: nombre,
-      estado: "disponible",
+      estado: "ocupado",
       rol: rol,
+      flogin: true,
     });
   }
 
@@ -43,10 +45,8 @@ export class FirestoreService {
     return this.angularFirestore.collection(collection).valueChanges();
   }
   public trackingUpdate(updateBool: string) {
-    return new Promise((resolve, reject) => {
-      this.angularFirestore.collection("tracking").doc("update").update({
-        actualizarBool: updateBool,
-      });
+    this.angularFirestore.collection("tracking").doc("update").update({
+      actualizarBool: updateBool,
     });
   }
 
