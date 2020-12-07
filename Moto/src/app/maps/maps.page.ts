@@ -29,7 +29,7 @@ export class MapsPage implements OnInit {
   infoWindows: any = [];
   clientAcept: [];
   orders: MarkerOptions[] = [];
-  ordersCurrent: any[] = [];
+  orderCurrent = "";
 
   constructor(
     private geolocation: Geolocation,
@@ -48,6 +48,7 @@ export class MapsPage implements OnInit {
     this.loadMap();
     this.checkTrackingUpdate();
     this.listenNewOrder();
+    this.showClientLocation();
   }
 
   loadMap() {
@@ -76,7 +77,7 @@ export class MapsPage implements OnInit {
           this.long = this.map.center.lng();
           this.loadMarkers();
           this.addMarker(latLng);
-          this.loadClientLocation();
+          this.showClientLocation();
           //this.loadOrder("PEDIDO8");
         });
       })
@@ -209,30 +210,23 @@ export class MapsPage implements OnInit {
           handler: () => {
             this.database.collection("pedidos").doc(idPedido).update({estado: "En camino"});
             this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
-            this.addClientLocation(idPedido);
+            this.orderCurrent = idPedido;
           }
         }
       ]
     });
     await alert.present();
   }
-  addClientLocation(idPedido) {
-    this.ordersCurrent.push(idPedido);
-   }
-   showClientLocation(idPedido) {
-    this.database.collection("pedidos").doc(idPedido).valueChanges().subscribe((pedido: any) => {
-      const order = new google.maps.Marker({
-      position: { lat: Number(pedido.position.lat), lng: Number(pedido.position.lng) },
-       //position: { lat: -17.34, lng: -66.18 }, 
-       map: this.map,
-       icon : "../assets/icon/alfiler.png"
+  showClientLocation() {
+    if (this.orderCurrent != "") {
+      this.database.collection("pedidos").doc(this.orderCurrent).valueChanges().subscribe((pedido: any) => {
+        console.log(pedido.position);
+        const order = new google.maps.Marker({
+        position: { lat: Number(pedido.position.lat), lng: Number(pedido.position.lng) },
+        map: this.map,
+        icon : "../assets/icon/alfiler.png"
+        });
       });
-      //this.orders.push(order);
-    });
-   }
-   loadClientLocation() {
-     this.ordersCurrent.forEach(order => {
-       this.showClientLocation(order);
-     })
+    }
    }
 }
