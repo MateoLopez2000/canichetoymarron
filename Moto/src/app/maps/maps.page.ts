@@ -47,7 +47,7 @@ export class MapsPage implements OnInit {
     this.loadMap();
     this.checkTrackingUpdate();
     this.listenNewOrder();
-    this.showClientLocation();
+    //this.showClientLocation();
   }
 
   loadMap() {
@@ -71,12 +71,16 @@ export class MapsPage implements OnInit {
           mapOptions
         );
 
+        this.showClientLocation();
+        this.loadMarkers();
+        this.addMarker(latLng);
+
         this.map.addListener("tilesloaded", () => {
           this.lat = this.map.center.lat();
           this.long = this.map.center.lng();
           this.loadMarkers();
           this.addMarker(latLng);
-          //this.showClientLocation();
+          this.showClientLocation();
           //this.loadOrder("PEDIDO8");
         });
       })
@@ -229,4 +233,10 @@ export class MapsPage implements OnInit {
         });
       })
    }
+   doRefresh(event) {
+    this.loadMap();
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000);
+  }
 }
