@@ -20,6 +20,10 @@ const routes: Routes = [
       {
         path: 'gestion-pedido',
         loadChildren: () => import('../gestion-pedido/gestion-pedido.module').then( pedido => pedido.GestionPedidoPageModule)
+       },
+      {
+        path: 'register',
+        loadChildren: () => import('../register/register.module').then(m => m.RegisterPageModule)
       },
       {
         path: '',

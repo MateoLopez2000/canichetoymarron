@@ -21,21 +21,23 @@ export class AuthService {
   ) {}
 
   user = this.AFauth.currentUser;
-  getTrackingUpdate() {
-    return this.db.collection("tracking").doc("update").get();
-  }
   update_location(nombre: string, latitud: string, longitud: string) {
-    return new Promise((resolve, reject) => {
       this.db.collection("Motos").doc(nombre).update({
         position: {
           lat: latitud,
           lng: longitud
         },
-      });
     });
   }
-
   public getSucursalesData(collection) {
     return this.db.collection(collection).valueChanges();
+  }
+  public getEspecificMoto(collection, email) {
+    return this.db.collection(collection).doc(email).valueChanges();
+  }
+  public updateEspecificlogin(collection, email) {
+    this.db.collection(collection).doc(email).update({
+      flogin: false,
+    });
   }
 }

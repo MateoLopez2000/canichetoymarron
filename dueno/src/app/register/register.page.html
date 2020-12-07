@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>register</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card id="logincard">
+    <ion-card-content>
+      <ion-item>
+        <ion-input [(ngModel)]="user.email" placeholder="youremail@gmail.com"></ion-input>
+      </ion-item>
+      <br>
+      <ion-item>
+        <ion-input [(ngModel)]="user.password" placeholder="Password" type="password"></ion-input>
+      </ion-item>
+      <br>
+      <ion-radio-group [(ngModel)]="rol">
+        <ion-item>
+          <ion-label>Dueño</ion-label>
+          <ion-radio slot="start" value="dueno"></ion-radio>
+        </ion-item>
+      
+        <ion-item>
+          <ion-label>Moto</ion-label>
+          <ion-radio slot="start" value="moto"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+      <br>
+      <div style="text-align: center; margin: auto">
+        <ion-button aria-expanded="block" (click)="register()">Register</ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

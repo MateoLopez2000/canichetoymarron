@@ -8,7 +8,19 @@ const routes: Routes = [
     path: '',
     component: TabsPage,
     children: [
-      { path: 'map',loadChildren: () =>import('../maps/maps.module').then(map=>map.MapsPageModule)}
+      { 
+        path: 'map',
+        loadChildren: () =>import('../maps/maps.module').then(map=>map.MapsPageModule)
+      },
+      {
+        path: 'pedidos',
+        loadChildren: () => import('../pedidos/pedidos.module').then(pedido=>pedido.PedidosPageModule)
+      },
+      {
+        path: '',
+        redirectTo: '/tabs/map',
+        pathMatch: 'full'
+      }
     ]
   },
   {
