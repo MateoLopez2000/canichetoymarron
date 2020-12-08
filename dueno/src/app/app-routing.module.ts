@@ -12,7 +12,11 @@ const routes: Routes = [
   {
     path: 'password-recovery',
     loadChildren: () => import('./password-recovery/password-recovery.module').then( m => m.PasswordRecoveryPageModule)
-  }
+  },
+  /*{
+    path: 'register',
+    loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
+  },*/
 ];
 
 @NgModule({

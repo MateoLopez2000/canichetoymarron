@@ -13,7 +13,7 @@ export class LoginPage implements OnInit {
   user= {
     email: '',
     password: ''
-  }
+  };
 
   constructor(
     private router: Router,
@@ -29,7 +29,13 @@ export class LoginPage implements OnInit {
     await this.ngFireAuth.signInWithEmailAndPassword(this.user.email, this.user.password).
     then(
       ()=>{
-      this.router.navigate(['/tabs/sucursales']);
+        this.firestoreService.getEspecificMoto("Motos", this.user.email).subscribe((moto: any) => {
+          if (moto.rol === "dueno") {
+            this.router.navigate(['/tabs/sucursales']);
+          }else {
+            alert("you don't belong here")
+          }
+        });
       },
       async error=> {
         const alert = await this.alertCtrl.create({
@@ -41,26 +47,6 @@ export class LoginPage implements OnInit {
         await alert.present();
       }
     )
-  }
-
-  async register() {
-    await this.ngFireAuth.createUserWithEmailAndPassword(this.user.email, this.user.password).
-    then(
-      ()=>{
-      this.router.navigate(['/tabs/sucursales']);
-      },
-      async error=> {
-        const alert = await this.alertCtrl.create({
-          message:error.message,
-          buttons:[{text: 'ok',role:'cancel',handler:()=>{
-          },},],
-        },
-        );
-        await alert.present();
-      }
-    )
-    var split = this.user.email.split( '@' , 1 );
-    this.firestoreService.insertMoto('Motos', this.user.email, split[0] );
   }
   async resetPassword() {
     this.router.navigate(['/password-recovery']);
