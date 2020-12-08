@@ -26,7 +26,17 @@ export class GestionPedidoPage implements OnInit {
   id: string;
   driver: any;
   moto: any;
- 
+  pedido: string;
+  selectedMoto = {
+    id: String,
+    position: {
+      lat: 0,
+      lng: 0
+    },
+    nombreDeMoto: String,
+    estado: String,
+    markerObj: ConstantSourceNode
+  };
 
   constructor(
     private geolocation: Geolocation,
@@ -148,6 +158,8 @@ export class GestionPedidoPage implements OnInit {
         const p_markerObj = this.addMaker(pedido, map, "../assets/icon/home1.png");
         pedido.p_markerObj = p_markerObj;
         (document.getElementById("idPedido") as HTMLElement).innerHTML = " \t " + pedido.id.toUpperCase() ;
+        this.pedido = pedido.id.toUpperCase();
+
         (document.getElementById("desc") as HTMLElement).innerHTML = " \t Productos : " + pedido.productos ;
         this.getRoute(new google.maps.LatLng(moto.position.lat, moto.position.lng), pedido.LatLngPedido);
       }

@@ -12,7 +12,7 @@ export class OrdersPage implements OnInit {
 
   pedidos: any = [];
   badgecolor: string;
-
+  
   constructor(
     private firestoreService: FirestoreService,
     public navCtrl: NavController
