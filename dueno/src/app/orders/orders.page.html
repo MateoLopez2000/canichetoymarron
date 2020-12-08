@@ -5,28 +5,28 @@
 </ion-header>
 <ion-content>
   <div>
-      <ion-card *ngFor="let pedido of pedidos" button (click)="checkOrderState()">
-        <ion-row class="ion-align-items-center">
-          <ion-col size="3" class="ion-align-items-center">
-            <div>
-              <img src="https://www.flaticon.com/svg/static/icons/svg/3770/3770612.svg" class="img-responsive">
-            </div>
-          </ion-col>
-            <ion-col size="9">
-              <ion-card-content class="ion-text-left">
-                <ion-card-title>{{ pedido.id }}</ion-card-title>
-                <ion-badge item-end [attr.color]="setBadgeColor(pedido.estado)">{{ pedido.estado }}</ion-badge>
-                <ion-row ion-row class="ion-align-items-center">
-                  <ion-col size="3">
-                    <ion-icon size="small" name="bicycle-outline"></ion-icon>
-                  </ion-col>
-                  <ion-col size="9">
-                    <ion-card-subtitle>{{ pedido.moto }}</ion-card-subtitle>
-                  </ion-col>
-                </ion-row>
-              </ion-card-content>
-          </ion-col>
-        </ion-row>
+      <ion-card *ngFor="let pedido of pedidos" button (click)="checkOrderState(pedido.moto)">
+          <ion-row class="ion-align-items-center">
+            <ion-col size="3" class="ion-align-items-center">
+              <div>
+                <img src="https://www.flaticon.com/svg/static/icons/svg/3770/3770612.svg" class="img-responsive">
+              </div>
+            </ion-col>
+              <ion-col size="9">
+                <ion-card-content class="ion-text-left">
+                  <ion-card-title>{{ pedido.id }}</ion-card-title>
+                  <ion-badge item-end [attr.color]="setBadgeColor(pedido.estado)">{{ pedido.estado }}</ion-badge>
+                  <ion-row ion-row class="ion-align-items-center">
+                    <ion-col size="3">
+                      <ion-icon size="small" name="bicycle-outline"></ion-icon>
+                    </ion-col>
+                    <ion-col size="9">
+                      <ion-card-subtitle>{{ pedido.driver }}</ion-card-subtitle>
+                    </ion-col>
+                  </ion-row>
+                </ion-card-content>
+            </ion-col>
+          </ion-row>
       </ion-card>
   </div>
 </ion-content>

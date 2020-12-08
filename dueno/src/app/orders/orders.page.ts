@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
+import { ToastController,  } from '@ionic/angular';
 import { FirestoreService } from "../services/data/firestore.service";
 
 @Component({
@@ -13,13 +14,15 @@ export class OrdersPage implements OnInit {
   badgecolor: string;
 
   constructor(
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    public navCtrl: NavController
   ) {
   }
 
   ngOnInit() {
     this.getPedidos();
   }
+
   getPedidos() {
     this.firestoreService.getPedidos().subscribe((pedidosList) => {
       this.pedidos = [];
@@ -36,7 +39,8 @@ export class OrdersPage implements OnInit {
           direccion: pedidoData.direccion,
           fechahorapedido: pedidoData.fechahorapedido,
           nit: pedidoData.nit,
-          moto: this.getDriverName(pedidoData.moto)[0].toUpperCase(),
+          driver: this.getDriverName(pedidoData.moto)[0].toUpperCase(),
+          moto: pedidoData.moto,
           nombre: pedidoData.nombre,
           productos: pedidoData.productos,
           sucursal: pedidoData.sucursal,
@@ -63,7 +67,8 @@ export class OrdersPage implements OnInit {
         return 'warning';
     }
   }
-  checkOrderState() {
-    console.log("test");
+  checkOrderState(driver) {
+   //alert('Driver:'+driver);
+    this.navCtrl.navigateForward('tabs/gestion-pedido/' + driver);
   }
 }

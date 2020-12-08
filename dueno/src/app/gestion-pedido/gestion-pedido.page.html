@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar  color ="secondary">
+    <ion-title >
+      Gestión de motos y pedidos
+    </ion-title>
+    <ion-button (click)="getMotobyId(id)">Test</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+  <ion-content>
+    <ion-list>
+      <ion-card>
+        <ion-item> 
+          <ion-avatar item-start>
+            <img src="../assets/icon/moto.png">
+          </ion-avatar>
+          <ion-card-header>
+            {{ id }}
+          </ion-card-header>
+        </ion-item>
+        <ion-item>
+          <div id="maps" style=" width: 100%;  height: 100%; min-height: 200pt;"></div>
+        </ion-item>
+        <ion-item>
+          <ion-card-subtitle id="estado">
+          </ion-card-subtitle>
+        </ion-item>
+        <ion-card-content > 
+          <ion-icon name="receipt-outline"> </ion-icon>
+            <span id="idPedido"></span>          
+        </ion-card-content>
+          <ion-card-content>
+            <p>  <span id= "total"> </span>  </p >          
+          </ion-card-content>
+      </ion-card>
+    </ion-list>
+  </ion-content>
