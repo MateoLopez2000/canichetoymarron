@@ -23,6 +23,7 @@ export class GestionPedidoPage implements OnInit {
   directionsRenderer: any;
   directionsService: any;
   id: string;
+  driver: any;
   selectedMoto = {
     id: String,
     position: {
@@ -46,6 +47,7 @@ export class GestionPedidoPage implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
     //alert('RECIBIDO: '+this.id);
+    this.driver = this.id.split('@');
     this.getMotos();
     this.getPedidos();
     this.loadMaps();    
@@ -166,7 +168,7 @@ export class GestionPedidoPage implements OnInit {
       if(pedido.moto  == this.id){
         const p_markerObj = this.addMaker(pedido, map, "../assets/icon/home1.png");
         pedido.p_markerObj = p_markerObj;
-        (document.getElementById("idPedido") as HTMLElement).innerHTML = " \t " + pedido.id ;
+        (document.getElementById("idPedido") as HTMLElement).innerHTML = " \t " + pedido.id.toUpperCase() ;
         this.getRoute(new google.maps.LatLng(moto.position.lat, moto.position.lng), pedido.LatLngPedido);
       }
     });

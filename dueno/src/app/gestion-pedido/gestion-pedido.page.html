@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar  color ="secondary">
     <ion-title >
-      Gestión de motos y pedidos
+      Gestión de Pedidos
     </ion-title>
     <ion-button (click)="getMotobyId(id)">Test</ion-button>
   </ion-toolbar>
@@ -15,7 +15,7 @@
             <img src="../assets/icon/moto.png">
           </ion-avatar>
           <ion-card-header>
-            {{ id }}
+            {{ driver[0].toUpperCase() }}
           </ion-card-header>
         </ion-item>
         <ion-item>
