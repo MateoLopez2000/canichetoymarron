@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Injectable } from "@angular/core";
 
 import { AngularFirestore } from "@angular/fire/firestore";
@@ -47,6 +48,10 @@ export class FirestoreService {
       sucursal: "Suc1",
       telefono: "",
       total: ""});
+  }
+  public getMotoById(id)  {
+    return this.angularFirestore.collection("Motos").doc(id).valueChanges();
+  
   }
   public getData(collection) {
     return this.angularFirestore.collection(collection).valueChanges();

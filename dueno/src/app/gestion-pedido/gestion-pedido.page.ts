@@ -1,3 +1,4 @@
+import { element } from 'protractor';
 import { NumberValueAccessor } from '@angular/forms';
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
@@ -24,16 +25,8 @@ export class GestionPedidoPage implements OnInit {
   directionsService: any;
   id: string;
   driver: any;
-  selectedMoto = {
-    id: String,
-    position: {
-      lat: 0,
-      lng: 0
-    },
-    nombreDeMoto: String,
-    estado: String,
-    markerObj: ConstantSourceNode
-  };
+  moto: any;
+ 
 
   constructor(
     private geolocation: Geolocation,
@@ -48,6 +41,7 @@ export class GestionPedidoPage implements OnInit {
     this.id = this.route.snapshot.paramMap.get('id');
     //alert('RECIBIDO: '+this.id);
     this.driver = this.id.split('@');
+    
     this.getMotos();
     this.getPedidos();
     this.loadMaps();    
@@ -55,14 +49,13 @@ export class GestionPedidoPage implements OnInit {
 
   loadMaps() {
 
-    this.getMotobyId(); 
-  
+
     this.geolocation.getCurrentPosition().then((res) => {
       
         this.directionsService=  new google.maps.DirectionsService();
         this.directionsRenderer=  new google.maps.DirectionsRenderer();
 
-        let moto = this.selectedMoto;
+        let moto = this.motos[0];
         this.lat = Number(moto.position.lat);
         this.lng = Number(moto.position.lng);
       
@@ -93,21 +86,24 @@ export class GestionPedidoPage implements OnInit {
   }
   
    getMotos() {
-     this.firestoreService.getMotos().subscribe((motosArray) => {
-      this.motos = [];
-      motosArray.forEach((moto: any) => {
-        let motoData = moto.payload.doc.data();
-        this.motos.push({
-          id: moto.payload.doc.id,
-          position: {
-            lat: Number(motoData.position.lat),
-            lng: Number(motoData.position.lng),
-          },
-          LatLngMoto: new google.maps.LatLng(motoData.position.lat, motoData.position.lng), 
-          nombreDeMoto: motoData.nombreDeMoto.toUpperCase(),
-          estado: motoData.estado
-        });
-      });
+
+      this.firestoreService.getMotos().subscribe((motosArray) => {
+        this.motos = [];
+        motosArray.forEach((moto: any) => {
+          if(moto.payload.doc.id === this.id){
+             let motoData = moto.payload.doc.data();
+             this.motos.push({
+             id: moto.payload.doc.id,
+             position: {
+                lat: Number(motoData.position.lat),
+                lng: Number(motoData.position.lng),
+             },
+             LatLngMoto: new google.maps.LatLng(motoData.position.lat, motoData.position.lng), 
+             nombreDeMoto: motoData.nombreDeMoto.toUpperCase(),
+             estado: motoData.estado 
+             });
+          }
+       });
     });
   }
 
@@ -121,23 +117,6 @@ export class GestionPedidoPage implements OnInit {
     return marker;
   }
 
- getMotobyId() {
-   this.motos.forEach((moto: MarkerOptions) => {
-      if (moto.id === this.id)
-      {
-        this.selectedMoto.id = moto.id;
-        //alert('IGUALES'+ this.selectedMoto.id);
-        this.selectedMoto.position = {
-            lat: (moto.position.lat),
-            lng: (moto.position.lng),
-          },
-        this.selectedMoto.nombreDeMoto = moto.nombreDeMoto.toUpperCase();
-        this.selectedMoto.estado = moto.estado;
-
-        (document.getElementById("estado") as HTMLElement).innerHTML = "Moto: \t " + moto.estado.toUpperCase() ;
-      }
-    });
-  }
 
   getPedidos() {
     this.firestoreService.getPedidos().subscribe((pedidosList) => {
@@ -169,6 +148,7 @@ export class GestionPedidoPage implements OnInit {
         const p_markerObj = this.addMaker(pedido, map, "../assets/icon/home1.png");
         pedido.p_markerObj = p_markerObj;
         (document.getElementById("idPedido") as HTMLElement).innerHTML = " \t " + pedido.id.toUpperCase() ;
+        (document.getElementById("desc") as HTMLElement).innerHTML = " \t Productos : " + pedido.productos ;
         this.getRoute(new google.maps.LatLng(moto.position.lat, moto.position.lng), pedido.LatLngPedido);
       }
     });
