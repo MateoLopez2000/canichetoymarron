@@ -1,38 +1,40 @@
 <ion-header>
   <ion-toolbar  color ="secondary">
-    <ion-title >
-      Gestión de motos y pedidos
-    </ion-title>
+    <ion-row>
+      <ion-title >
+        {{ pedido }}
+      </ion-title>
+      <!-- <ion-button (click)="getMotobyId(id)">Test</ion-button> -->
+    </ion-row>
   </ion-toolbar>
 </ion-header>
 
-  <ion-content>
+  <ion-content >
     <ion-list>
-      <ion-card  *ngFor="let item of motos">
+      <ion-card>
         <ion-item> 
           <ion-avatar item-start>
             <img src="../assets/icon/moto.png">
           </ion-avatar>
           <ion-card-header>
-            {{ item.id }}
+            {{ driver[0].toUpperCase() }}
+            <ion-card-subtitle>{{ id }}</ion-card-subtitle>
           </ion-card-header>
         </ion-item>
         <ion-item>
-          <div class="maps" style=" width: 100%;  height: 100%; min-height: 200pt;"></div>
+          <div id="maps" style=" width: 100%;  height: 100%; min-height: 300pt;"></div>
         </ion-item>
         <ion-item>
-          <ion-card-subtitle>
-             Moto: {{ item.estado }} 
-          </ion-card-subtitle>
+          <ion-card-subtitle id="estado"></ion-card-subtitle>
         </ion-item>
         <ion-card-content > 
           <ion-icon name="receipt-outline"> </ion-icon>
-            <span class="idPedido"></span>          
+            <span id="idPedido"></span>        
+            <p><span id="desc"></span> </p>     
         </ion-card-content>
           <ion-card-content>
-            <p>  <span class = "total"> </span>  </ p >          
+            <p>  <span id= "total"> </span>  </p >          
           </ion-card-content>
       </ion-card>
-      
     </ion-list>
   </ion-content>

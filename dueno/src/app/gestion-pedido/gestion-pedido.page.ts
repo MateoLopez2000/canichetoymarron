@@ -1,9 +1,11 @@
+import { element } from 'protractor';
 import { NumberValueAccessor } from '@angular/forms';
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
 import { NavController } from '@ionic/angular';
 import { GoogleMaps, MarkerOptions, Marker, LatLng } from '@ionic-native/google-maps';
 import { FirestoreService } from "../services/data/firestore.service";
+import { ActivatedRoute } from '@angular/router';
 
 declare var google;
 
@@ -19,19 +21,37 @@ export class GestionPedidoPage implements OnInit {
   motos: MarkerOptions[] = [];
   maps: any;
   pedidos:  MarkerOptions[] = [];
-  directionsRenderers = [];
-  directionsServices = [];
+  directionsRenderer: any;
+  directionsService: any;
+  id: string;
+  driver: any;
+  moto: any;
+  pedido: string;
+  selectedMoto = {
+    id: String,
+    position: {
+      lat: 0,
+      lng: 0
+    },
+    nombreDeMoto: String,
+    estado: String,
+    markerObj: ConstantSourceNode
+  };
 
   constructor(
     private geolocation: Geolocation,
     public zone: NgZone,
     public navCtrl: NavController,
     private firestoreService: FirestoreService,
+    private route: ActivatedRoute
   ) {
    }  
   
   ngOnInit() {
-
+    this.id = this.route.snapshot.paramMap.get('id');
+    //alert('RECIBIDO: '+this.id);
+    this.driver = this.id.split('@');
+    
     this.getMotos();
     this.getPedidos();
     this.loadMaps();    
@@ -39,60 +59,61 @@ export class GestionPedidoPage implements OnInit {
 
   loadMaps() {
 
+
     this.geolocation.getCurrentPosition().then((res) => {
       
-      this.maps = document.getElementsByClassName("maps");
-     
-      for (var i = 0; i < this.maps.length; i++) {      
-        this.directionsServices[i] =  new google.maps.DirectionsService();
-        this.directionsRenderers[i] =  new google.maps.DirectionsRenderer();
+        this.directionsService=  new google.maps.DirectionsService();
+        this.directionsRenderer=  new google.maps.DirectionsRenderer();
 
-        let moto = this.motos[i];   
-        let index = i;
-        this.lat = moto.position.lat;
-        this.lng = moto.position.lng;
+        let moto = this.motos[0];
+        this.lat = Number(moto.position.lat);
+        this.lng = Number(moto.position.lng);
       
         let mapOptions = {
-          center: moto.LatLngMoto,
+          center:  new google.maps.LatLng(moto.position.lat, moto.position.lng),
           zoom: 12,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
         }
 
-        let map = new google.maps.Map(this.maps[i], mapOptions)  
-        this.directionsRenderers[i].setMap(map);
-    
+        let map = new google.maps.Map(
+          document.getElementById("maps"),
+          mapOptions
+        );
+        this.directionsRenderer.setMap(map);
+
         map.addListener('tilesloaded', () => {
           this.lat = map.center.lat()
           this.lng = map.center.lng()
 
-          const markerObj = this.addMaker(moto, map,  "../assets/icon/repartidor.png");
-          moto.markerObj = markerObj;    
+        const markerObj = this.addMaker(moto, map,  "../assets/icon/repartidor.png");
+        moto.markerObj = markerObj;    
 
-          this.obtener_pedido_por_moto(map, index);
+          this.obtener_pedido_por_moto(map, moto);
         }); 
-
-      }
     }).catch((error) => {
       console.log('Error getting location', error);
     });
   }
   
    getMotos() {
-     this.firestoreService.getMotos().subscribe((motosArray) => {
-      this.motos = [];
-      motosArray.forEach((moto: any) => {
-        let motoData = moto.payload.doc.data();
-        this.motos.push({
-          id: moto.payload.doc.id,
-          position: {
-            lat: Number(motoData.position.lat),
-            lng: Number(motoData.position.lng),
-          },
-          LatLngMoto: new google.maps.LatLng(motoData.position.lat, motoData.position.lng), 
-          nombreDeMoto: motoData.nombreDeMoto,
-          estado: motoData.estado
-        });
-      });
+
+      this.firestoreService.getMotos().subscribe((motosArray) => {
+        this.motos = [];
+        motosArray.forEach((moto: any) => {
+          if(moto.payload.doc.id === this.id){
+             let motoData = moto.payload.doc.data();
+             this.motos.push({
+             id: moto.payload.doc.id,
+             position: {
+                lat: Number(motoData.position.lat),
+                lng: Number(motoData.position.lng),
+             },
+             LatLngMoto: new google.maps.LatLng(motoData.position.lat, motoData.position.lng), 
+             nombreDeMoto: motoData.nombreDeMoto.toUpperCase(),
+             estado: motoData.estado 
+             });
+          }
+       });
     });
   }
 
@@ -105,6 +126,7 @@ export class GestionPedidoPage implements OnInit {
     });
     return marker;
   }
+
 
   getPedidos() {
     this.firestoreService.getPedidos().subscribe((pedidosList) => {
@@ -130,36 +152,37 @@ export class GestionPedidoPage implements OnInit {
     });
   }
 
-  obtener_pedido_por_moto( map: any,  index: any){
+  obtener_pedido_por_moto( map: any,  moto: any){
     this.pedidos.forEach((pedido) => {
-      if(pedido.moto  == this.motos[index].id){
+      if(pedido.moto  == this.id){
         const p_markerObj = this.addMaker(pedido, map, "../assets/icon/home1.png");
         pedido.p_markerObj = p_markerObj;
-        (document.getElementsByClassName("idPedido")[index] as HTMLElement).innerHTML = " \t " + pedido.id ;
+        (document.getElementById("idPedido") as HTMLElement).innerHTML = " \t " + pedido.id.toUpperCase() ;
+        this.pedido = pedido.id.toUpperCase();
 
-        this.getRoute(this.motos[index].LatLngMoto, pedido.LatLngPedido, index);
+        (document.getElementById("desc") as HTMLElement).innerHTML = " \t Productos : " + pedido.productos ;
+        this.getRoute(new google.maps.LatLng(moto.position.lat, moto.position.lng), pedido.LatLngPedido);
       }
     });
   }
 
-  private getRoute(start: String, end: String, index: any) {
-      this.directionsServices[index].route({
+  private getRoute(start: String, end: String) {
+      this.directionsService.route({
         origin: start,
         destination: end,
         optimizeWaypoints: true,
         travelMode: google.maps.TravelMode.DRIVING,
       }, (response, status) => {
         if (status === "OK") {
-          this.directionsRenderers[index].setDirections(response);
-          this.computeTotalDistance(this.directionsRenderers[index].getDirections(), index);
+          this.directionsRenderer.setDirections(response);
+          this.computeTotalDistance(this.directionsRenderer.getDirections());
         } else {
          console.log("Direction Error : " + status );
         }
       });  
-
   }
 
-  computeTotalDistance(result, index ) {
+  computeTotalDistance(result) {
     let total = 0;
     let time = 0;
     const myroute = result.routes[0];
@@ -171,7 +194,7 @@ export class GestionPedidoPage implements OnInit {
     
     time = parseInt((time / 60).toString());
     total = total / 1000;
-    (document.getElementsByClassName("total")[index] as HTMLElement).innerHTML = "A " +  total + " km. de Distancia del Pedido.  ( " + time + " min )";
+    (document.getElementById("total") as HTMLElement).innerHTML = "A " +  total + " km. de Distancia del Pedido.  ( " + time + " min )";
     
   }
 }

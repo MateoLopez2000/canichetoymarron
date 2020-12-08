@@ -18,7 +18,7 @@ const routes: Routes = [
         loadChildren: () => import('../sucursales/sucursales.module').then(sucursal=>sucursal.SucursalesPageModule)
       },
       {
-        path: 'gestion-pedido',
+        path: 'gestion-pedido/:id',
         loadChildren: () => import('../gestion-pedido/gestion-pedido.module').then( pedido => pedido.GestionPedidoPageModule)
        },
       {
@@ -29,7 +29,11 @@ const routes: Routes = [
         path: '',
         redirectTo: '/tabs/sucursales',
         pathMatch: 'full'
-      }
+      },
+      {
+        path: 'orders',
+        loadChildren: () => import('../orders/orders.module').then( m => m.OrdersPageModule)
+      },
     ]
   },
   {
