@@ -1,9 +1,7 @@
-import { element } from 'protractor';
-import { NumberValueAccessor } from '@angular/forms';
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
+import { Geolocation} from '@ionic-native/geolocation/ngx';
 import { NavController } from '@ionic/angular';
-import { GoogleMaps, MarkerOptions, Marker, LatLng } from '@ionic-native/google-maps';
+import {  MarkerOptions} from '@ionic-native/google-maps';
 import { FirestoreService } from "../services/data/firestore.service";
 import { ActivatedRoute } from '@angular/router';
 

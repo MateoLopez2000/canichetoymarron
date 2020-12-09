@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { ToastController,  } from '@ionic/angular';
 import { FirestoreService } from "../services/data/firestore.service";
 
 @Component({
