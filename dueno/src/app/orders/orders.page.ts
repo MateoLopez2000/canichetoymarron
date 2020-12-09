@@ -68,7 +68,6 @@ export class OrdersPage implements OnInit {
     }
   }
   checkOrderState(driver) {
-   //alert('Driver:'+driver);
     this.navCtrl.navigateForward('tabs/gestion-pedido/' + driver);
   }
 }
