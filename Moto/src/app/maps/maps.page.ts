@@ -1,10 +1,8 @@
-import {Component,OnInit,NgZone,ElementRef,ViewChild} from "@angular/core";
-import { Geolocation, Geoposition } from "@ionic-native/geolocation/ngx";
+import {Component,OnInit,NgZone,ViewChild} from "@angular/core";
+import { Geolocation} from "@ionic-native/geolocation/ngx";
 import { IonSlides,NavController, AlertController } from "@ionic/angular";
-import { GoogleMaps, MarkerOptions } from "@ionic-native/google-maps";
-import {AngularFirestoreDocument,AngularFirestore,} from "@angular/fire/firestore";
-import * as firebase from "firebase";
-import {NativeGeocoder,NativeGeocoderResult, NativeGeocoderOptions,} from "@ionic-native/native-geocoder/ngx";
+import { MarkerOptions } from "@ionic-native/google-maps";
+import {AngularFirestore,} from "@angular/fire/firestore";
 import { AuthService } from "../services/auth.service";
 import { AngularFireAuth } from '@angular/fire/auth';
 
@@ -19,26 +17,19 @@ export class MapsPage implements OnInit {
   @ViewChild(IonSlides) slides: IonSlides;
   map: any;
   lat: string;
-  currentlat: string;
-  currentlong: string;
   long: string;
   location: any;
   user: any;
   infoWindow: any;
   markers: MarkerOptions[] = [];
   infoWindows: any = [];
-  clientAcept: [];
-  orders: MarkerOptions[] = [];
   isTracking = false;
   watch = null;
 
   constructor(
     private geolocation: Geolocation,
-    private zone: NgZone,
     public navCtrl: NavController,
-    private googleMaps: GoogleMaps,
     private database: AngularFirestore,
-    private nativeGeocoder: NativeGeocoder,
     public auth: AuthService,
     public ngFireAuth: AngularFireAuth,
     private firestoreService: AuthService,
@@ -47,10 +38,7 @@ export class MapsPage implements OnInit {
 
   ngOnInit() {
     this.loadMap();
-    this.checkTrackingUpdate();
     this.listenNewOrder();
-    //this.showClientLocation();
-    //this.user="andres@gmail.com"
     this.user = this.ngFireAuth.authState._subscribe;
     this.ngFireAuth.authState.subscribe(res => {
       this.user = res.email;
@@ -86,7 +74,6 @@ export class MapsPage implements OnInit {
           this.loadMarkers();
           this.addMarker(latLng);
           this.showClientLocation();
-          //this.loadOrder("PEDIDO8");
         });
       })
       .catch((error) => {
