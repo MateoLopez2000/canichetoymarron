@@ -1,11 +1,9 @@
-import { Component, OnInit, NgZone, ElementRef, ViewChild, } from "@angular/core";
-import { Geolocation, Geoposition } from "@ionic-native/geolocation/ngx";
+import { Component, OnInit, NgZone, ViewChild, } from "@angular/core";
+import { Geolocation} from "@ionic-native/geolocation/ngx";
 import { IonSlides, NavController, ToastController, LoadingController, } from "@ionic/angular";
-import { GoogleMaps, Marker, MarkerCluster, MarkerOptions, } from "@ionic-native/google-maps";
-import { AngularFirestoreDocument, AngularFirestore, } from "@angular/fire/firestore";
-import { Observable } from "rxjs";
-import * as firebase from "firebase";
-import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions, } from "@ionic-native/native-geocoder/ngx";
+import { GoogleMaps, MarkerOptions, } from "@ionic-native/google-maps";
+import {  AngularFirestore, } from "@angular/fire/firestore";
+import { NativeGeocoder} from "@ionic-native/native-geocoder/ngx";
 import { FirestoreService } from "../services/data/firestore.service";
 declare var google;
 //let uid = 'SUCURSAL TEST';
@@ -203,8 +201,7 @@ export class SucursalesPage implements OnInit {
     let motoasignada = this.calculateNearestMoto(latSucursal, lngSucursal);
     console.log(motoasignada);
     this.firestoreService.updateData("pedidos", idPedido, { "moto": motoasignada });
-    //this.firestoreService.updateData("Motos", motoasignada, { "estado": "ocupado" });
-  }
+ }
   private getPositionSucursal(idsucursal) {
     let latSucursal;
     let lngSucursal;

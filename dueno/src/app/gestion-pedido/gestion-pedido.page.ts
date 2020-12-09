@@ -1,9 +1,7 @@
-import { element } from 'protractor';
-import { NumberValueAccessor } from '@angular/forms';
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
+import { Geolocation} from '@ionic-native/geolocation/ngx';
 import { NavController } from '@ionic/angular';
-import { GoogleMaps, MarkerOptions, Marker, LatLng } from '@ionic-native/google-maps';
+import {  MarkerOptions} from '@ionic-native/google-maps';
 import { FirestoreService } from "../services/data/firestore.service";
 import { ActivatedRoute } from '@angular/router';
 
@@ -27,16 +25,6 @@ export class GestionPedidoPage implements OnInit {
   driver: any;
   moto: any;
   pedido: string;
-  selectedMoto = {
-    id: String,
-    position: {
-      lat: 0,
-      lng: 0
-    },
-    nombreDeMoto: String,
-    estado: String,
-    markerObj: ConstantSourceNode
-  };
 
   constructor(
     private geolocation: Geolocation,
@@ -49,7 +37,6 @@ export class GestionPedidoPage implements OnInit {
   
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
-    //alert('RECIBIDO: '+this.id);
     this.driver = this.id.split('@');
     
     this.getMotos();

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
-import { ToastController,  } from '@ionic/angular';
 import { FirestoreService } from "../services/data/firestore.service";
 
 @Component({
@@ -68,7 +67,6 @@ export class OrdersPage implements OnInit {
     }
   }
   checkOrderState(driver) {
-   //alert('Driver:'+driver);
     this.navCtrl.navigateForward('tabs/gestion-pedido/' + driver);
   }
 }
