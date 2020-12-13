@@ -48,6 +48,7 @@ export class SucursalesPage implements OnInit {
   }
   insertPedidoPrueba(){
     this.firestoreService.insertPedido(this.idpruebapedido);
+    this.idpruebapedido ="";
   }
   loadMap() {
     this.geolocation
@@ -154,6 +155,7 @@ export class SucursalesPage implements OnInit {
           estado: motoData.estado
         });
       });
+      this.getPedidos();
     });
   }
   doRefresh(event) {
@@ -199,9 +201,23 @@ export class SucursalesPage implements OnInit {
     let pedidoData = pedido.payload.doc.data();
     let { latSucursal, lngSucursal } = this.getPositionSucursal(pedidoData.sucursal);
     let motoasignada = this.calculateNearestMoto(latSucursal, lngSucursal);
-    console.log(motoasignada);
+    if(this.noMotoAvailable(motoasignada)){
+      return
+    }
+    this.updateMotoStateLocally(motoasignada);
     this.firestoreService.updateData("pedidos", idPedido, { "moto": motoasignada });
- }
+    this.firestoreService.updateData("Motos", motoasignada, { "estado": "ocupado" });
+  }
+  private updateMotoStateLocally(motoasignada: any) {
+    this.motos.forEach(moto => {
+      if (moto.id === motoasignada) {
+        moto.estado = "ocupado";
+      }
+    });
+  }
+  private noMotoAvailable(motoasignada: any) {
+    return motoasignada === "";
+  }
   private getPositionSucursal(idsucursal) {
     let latSucursal;
     let lngSucursal;
@@ -216,15 +232,20 @@ export class SucursalesPage implements OnInit {
   private calculateNearestMoto(latSucursal: any, lngSucursal: any) {
     var min = Number.MAX_VALUE;
     let motoasignada;
+    var foundmoto = false;
     this.motos.forEach(moto => {
       if (moto.estado === "disponible") {
         let distance = this.calculateDistance(moto.position.lat, latSucursal, moto.position.lng, lngSucursal);
         if (distance < min) {
           min = distance;
           motoasignada = moto.id;
+          foundmoto = true;
         }
       }
     });
+    if(!foundmoto){
+      return ""
+    }
     return motoasignada;
   }
   private calculateDistance(lat1, lat2, lng1, lng2) {
