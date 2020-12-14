@@ -15,18 +15,8 @@ const routes: Routes = [
       {
         path: 'pedidos',
         loadChildren: () => import('../pedidos/pedidos.module').then(pedido=>pedido.PedidosPageModule)
-      },
-      {
-        path: '',
-        redirectTo: '/tabs/map',
-        pathMatch: 'full'
       }
     ]
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/map',
-    pathMatch: 'full'
   }
 ];
 

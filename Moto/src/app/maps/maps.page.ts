@@ -5,6 +5,7 @@ import { MarkerOptions } from "@ionic-native/google-maps";
 import {AngularFirestore,} from "@angular/fire/firestore";
 import { AuthService } from "../services/auth.service";
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from "@angular/router";
 
 declare var google;
 
@@ -25,6 +26,7 @@ export class MapsPage implements OnInit {
   infoWindows: any = [];
   isTracking = false;
   watch = null;
+  ocupado = false;
 
   constructor(
     private geolocation: Geolocation,
@@ -33,16 +35,24 @@ export class MapsPage implements OnInit {
     public auth: AuthService,
     public ngFireAuth: AngularFireAuth,
     private firestoreService: AuthService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.loadMap();
-    this.listenNewOrder();
-    this.user = this.ngFireAuth.authState._subscribe;
+    this.getUser();
+  }
+  getUser() {
     this.ngFireAuth.authState.subscribe(res => {
-      this.user = res.email;
-      this.startTracking();
+      if (res && res.uid) {
+        this.user = res.email;
+        this.loadMap();
+        this.listenNewOrder();
+        this.startTracking();
+      } else {
+        this.router.navigateByUrl('');
+        console.log('user not logged in');
+      }
     });
   }
   loadMap() {
@@ -149,7 +159,6 @@ export class MapsPage implements OnInit {
     let infoWindow = new google.maps.InfoWindow({
       content: infoWindowContent,
     });
-
     marker.addListener("click", () => {
       this.closeAllInfoWindows();
       infoWindow.open(this.map, marker);
@@ -167,6 +176,9 @@ export class MapsPage implements OnInit {
     this.database.collection("pedidos").valueChanges({ idField: 'pedidoId' })
     .subscribe((pedidos: any) => {
       pedidos.forEach(pedido => {
+        if(this.ocupado){
+          return
+        }
         if(pedido.moto == this.user && pedido.estado == "Listo para recoger") {
           this.showAlert(pedido.pedidoId, pedido.direccion);
         }      
@@ -181,9 +193,12 @@ export class MapsPage implements OnInit {
       message: '¿Desea aceptar el pedido?',
       buttons:  [
         {
-          text: 'Rechazar',
+          text: 'Rechazar (Se cerrará tu sesión)',
           handler: () => {
-            this.database.collection("pedidos").doc(idPedido).update({estado: "Pendiente"});
+            this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
+            this.ocupado = true;
+            this.database.collection("pedidos").doc(idPedido).update({estado: "Listo para recoger", moto: ""});
+            this.router.navigateByUrl('');
           }
         },
         {
@@ -191,6 +206,7 @@ export class MapsPage implements OnInit {
           handler: () => {
             this.database.collection("pedidos").doc(idPedido).update({estado: "En camino"});
             this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
+            this.router.navigateByUrl('/tabs/pedidos');
           }
         }
       ]

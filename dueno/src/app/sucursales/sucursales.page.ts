@@ -162,7 +162,7 @@ export class SucursalesPage implements OnInit {
     this.loadMap();
     setTimeout(() => {
       event.target.complete();
-    }, 100);
+    }, 1000);
   }
   getPedidos() {
     this.firestoreService.getPedidos().subscribe((pedidosList) => {

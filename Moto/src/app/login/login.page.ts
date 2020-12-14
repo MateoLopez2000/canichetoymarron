@@ -32,8 +32,6 @@ export class LoginPage implements OnInit {
     await this.ngFireAuth.signInWithEmailAndPassword(this.user.email, this.user.password).
     then(
       ()=>{
-        this.database.collection("Motos").doc(this.user.email).update({estado: "disponible"});
-        this.router.navigate(['/tabs/map']);
         this.verifyFirstLogin();
       },
       async error=> {
@@ -55,7 +53,10 @@ export class LoginPage implements OnInit {
         this.user.password= '';
         this.ngFireAuth.signOut();
       } else if (this.user.email !== '') {
+        this.database.collection("Motos").doc(this.user.email).update({estado: "disponible"});
         this.router.navigate(['/tabs/map']);
+        this.user.email= '';
+        this.user.password= '';
       }
     });
   }

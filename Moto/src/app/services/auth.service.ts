@@ -21,6 +21,10 @@ export class AuthService {
   ) {}
 
   user = this.AFauth.currentUser;
+
+  public cerrarSesion() {
+    return this.AFauth.signOut();
+  }
   update_location(nombre: string, latitud: string, longitud: string) {
       this.db.collection("Motos").doc(nombre).update({
         position: {
