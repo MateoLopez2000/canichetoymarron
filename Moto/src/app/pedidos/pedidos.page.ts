@@ -4,6 +4,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from "../services/auth.service";
+import { GettersService } from "../services/getters.service";
 
 @Component({
   selector: 'app-pedidos',
@@ -20,6 +21,7 @@ export class PedidosPage implements OnInit {
   constructor(
     private database: AngularFirestore, 
     public ngFireAuth: AngularFireAuth,
+    public gettersService: GettersService,
     private alertController: AlertController,
     public auth: AuthService,
     private router: Router
@@ -27,7 +29,7 @@ export class PedidosPage implements OnInit {
 
   ngOnInit() {
     this.getSucursales();
-    this._getPedido();
+    this.getPedido();
   }
 
   getUser() {
@@ -40,28 +42,14 @@ export class PedidosPage implements OnInit {
       }
     });
   }
+
   getSucursales() {
-    this.auth.getSucursales().subscribe((sucursalesArray) => {
-      this.sucursales = [];
-      sucursalesArray.forEach((sucursal: any) => {
-        let sucursalData = sucursal.payload.doc.data();
-        let sucursalID = sucursal.payload.doc.id;
-        this.sucursales.push({
-          id: sucursalID,
-          position: {
-            lat: Number(sucursalData.position.lat),
-            lng: Number(sucursalData.position.lng),
-          },
-          name: sucursalData.name,
-          address: sucursalData.address,
-          telephone: sucursalData.telephone,
-          attention: sucursalData.attention,
-          imageURL: sucursalData.imageURL
-        });
-      });
+    this.auth.getData("Sucursales").subscribe((sucursalesArray) => {
+      this.sucursales = this.gettersService.loadSucursales(sucursalesArray);
     });
   }
-  _getPedido() {
+
+  getPedido() {
     this.getUser();
     this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
       .subscribe((pedidos: any) => {
@@ -73,13 +61,17 @@ export class PedidosPage implements OnInit {
         });
       });
   }
+
   getSucursalName(sucursalID){
     this.sucursales.forEach(sucursal => {
+      console.log(sucursal +""+sucursalID);
       if(sucursal.id===sucursalID){
         this.sucursal=sucursal.name
+        
       }
     });
   }
+
   entregado(idPedido) {
     this.showLogOutAlert()
     this.database.collection("Pedidos").doc(idPedido).update({estado: "Entregado"});

@@ -18,13 +18,10 @@ export class AuthService {
 
   user = this.AFauth.currentUser;
 
-  public getSucursales() {
-    return this.db.collection("Sucursales").snapshotChanges();
-  }
   public cerrarSesion() {
     return this.AFauth.signOut();
   }
-  update_location(nombre: string, latitud: string, longitud: string) {
+  public update_location(nombre: string, latitud: string, longitud: string) {
       this.db.collection("Motos").doc(nombre).update({
         position: {
           lat: latitud,
@@ -32,8 +29,8 @@ export class AuthService {
         },
     });
   }
-  public getSucursalesData(collection) {
-    return this.db.collection(collection).valueChanges();
+  public getData(collection) {
+    return this.db.collection(collection).snapshotChanges();
   }
   public getEspecificMoto(collection, email) {
     return this.db.collection(collection).doc(email).valueChanges();

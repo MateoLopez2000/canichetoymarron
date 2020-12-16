@@ -28,7 +28,6 @@ export class LoginPage implements OnInit {
     ) { }
 
   ngOnInit() {
-    
   }
 
   async login() {
@@ -48,6 +47,7 @@ export class LoginPage implements OnInit {
       }
     )
   }
+
   verifyFirstLogin(){
     this.firestoreService.getEspecificMoto("Motos", this.user.email).subscribe((moto: any) => {
       if (moto.flogin === true) {
@@ -57,17 +57,17 @@ export class LoginPage implements OnInit {
         this.ngFireAuth.signOut();
       } else if (this.user.email !== '') {
         this.checkIfHaveOrder();
-        this.router.navigate(['/tabs/pedidos']);
+        this.router.navigate(['/tabs/map']);
       }
     });
   }
+
   checkIfHaveOrder() {
     this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
       .subscribe((pedidos: any) => {
         pedidos.forEach(pedido => {
           console.log(pedido.estado,pedido.moto);
           if (pedido.estado == "En camino" && pedido.moto == this.user.email) {
-            console.log("hola");
             this.database.collection("Motos").doc(this.user.email).update({estado: "ocupado"});
             this.haveOrder = true;
           }
@@ -79,6 +79,7 @@ export class LoginPage implements OnInit {
         this.user.password= '';
       });
   }
+
   async resetPassword() {
     this.router.navigate(['/password-recovery']);
   }

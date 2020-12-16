@@ -6,6 +6,7 @@ import {AngularFirestore,} from "@angular/fire/firestore";
 import { AuthService } from "../services/auth.service";
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from "@angular/router";
+import { GettersService } from "../services/getters.service";
 
 declare var google;
 
@@ -34,7 +35,7 @@ export class MapsPage implements OnInit {
     private database: AngularFirestore,
     public auth: AuthService,
     public ngFireAuth: AngularFireAuth,
-    private firestoreService: AuthService,
+    public gettersService: GettersService,
     private alertController: AlertController,
     private router: Router
   ) {}
@@ -89,6 +90,7 @@ export class MapsPage implements OnInit {
         console.log("Error getting location", error);
       });
   }
+
   startTracking() {
     this.isTracking = true;
     this.watch = this.geolocation.watchPosition();
@@ -97,6 +99,7 @@ export class MapsPage implements OnInit {
           .update_location(this.user, data.coords.latitude, data.coords.longitude)
     })
   }
+
   addMarker(location) {
     const marker = new google.maps.Marker({
       position: location,
@@ -106,7 +109,7 @@ export class MapsPage implements OnInit {
     });
     this.markers.push(marker);
   }
-  //Add markers of sucursales 
+ 
   addSucursalMaker(itemMarker: MarkerOptions) {
     const marker = new google.maps.Marker({
       position: { lat: itemMarker.position.lat, lng: itemMarker.position.lng },
@@ -118,6 +121,7 @@ export class MapsPage implements OnInit {
     });
     return marker;
   }
+
   loadMarkers() {
     this.getSucursales();
     this.markers.forEach((marker) => {
@@ -126,32 +130,19 @@ export class MapsPage implements OnInit {
       this.addInfoWindowToMarker(markerObj);
     });
   }
-  //Add slide cards 
+
   async onSlideDidChange() {
     const currentSlide = await this.slides.getActiveIndex();
     const marker = this.markers[currentSlide];
     this.map.panTo({ lat: marker.position.lat, lng: marker.position.lng });
   }
-  //Get locations of sucursales
+
   getSucursales() {
-    this.firestoreService.getSucursalesData("Sucursales").subscribe((sucursalesArray) => {
-      this.markers = [];
-      sucursalesArray.forEach((sucursal: any) => {
-        this.markers.push({
-          position: {
-            lat: Number(sucursal.position.lat),
-            lng: Number(sucursal.position.lng),
-          },
-          name : sucursal.name,
-          address : sucursal.address,
-          telephone : sucursal.telephone,
-          attention : sucursal.attention,
-          imageURL : sucursal.imageURL
-        });
-      });
+    this.auth.getData("Sucursales").subscribe((sucursalesArray) => {
+      this.markers = this.gettersService.loadSucursales(sucursalesArray);
     });
   }
-  //Add info windows
+
   addInfoWindowToMarker(marker) {
     let infoWindowContent = "<b>" + marker.title + "</b><br/>" + marker.text;
 
@@ -159,16 +150,12 @@ export class MapsPage implements OnInit {
       content: infoWindowContent,
     });
     marker.addListener("click", () => {
-      this.closeAllInfoWindows();
+      for (let window of this.infoWindows) {
+        window.close();
+      }
       infoWindow.open(this.map, marker);
     });
     this.infoWindows.push(infoWindow);
-  }
-
-  closeAllInfoWindows() {
-    for (let window of this.infoWindows) {
-      window.close();
-    }
   }
   
   listenNewOrder() {
@@ -212,6 +199,7 @@ export class MapsPage implements OnInit {
     });
     await alert.present();
   }
+
   showClientLocation() {
       this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
       .subscribe((pedidos: any) => {
@@ -226,6 +214,7 @@ export class MapsPage implements OnInit {
         });
       })
    }
+
    doRefresh(event) {
     this.loadMap();
     setTimeout(() => {
