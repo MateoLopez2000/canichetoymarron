@@ -65,18 +65,19 @@ export class LoginPage implements OnInit {
   checkIfHaveOrder() {
     this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
       .subscribe((pedidos: any) => {
-        pedidos.forEach(pedido => {
-          console.log(pedido.estado,pedido.moto);
-          if (pedido.estado == "En camino" && pedido.moto == this.user.email) {
-            this.database.collection("Motos").doc(this.user.email).update({estado: "ocupado"});
-            this.haveOrder = true;
+        if(this.user.email !== ""){
+          pedidos.forEach(pedido => {
+            if (pedido.estado == "En camino" && pedido.moto == this.user.email) {
+              this.database.collection("Motos").doc(this.user.email).update({estado: "ocupado"});
+              this.haveOrder = true;
+            }
+          });
+          if(!this.haveOrder){
+            this.database.collection("Motos").doc(this.user.email).update({estado: "disponible"});
           }
-        });
-        if(!this.haveOrder){
-          this.database.collection("Motos").doc(this.user.email).update({estado: "disponible"});
+          this.user.email= '';
+          this.user.password= '';
         }
-        this.user.email= '';
-        this.user.password= '';
       });
   }
 
