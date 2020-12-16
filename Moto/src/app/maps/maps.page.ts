@@ -76,7 +76,6 @@ export class MapsPage implements OnInit {
 
         this.showClientLocation();
         this.loadMarkers();
-        this.addMarker(latLng);
 
         this.map.addListener("tilesloaded", () => {
           this.lat = this.map.center.lat();

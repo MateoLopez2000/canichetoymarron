@@ -5,7 +5,6 @@ import { Router } from "@angular/router";
 import {
   AngularFirestore,
 } from "@angular/fire/firestore";
-import * as firebase from "firebase";
 
 @Injectable({
   providedIn: "root",
@@ -19,6 +18,9 @@ export class AuthService {
 
   user = this.AFauth.currentUser;
 
+  public getSucursales() {
+    return this.db.collection("Sucursales").snapshotChanges();
+  }
   public cerrarSesion() {
     return this.AFauth.signOut();
   }

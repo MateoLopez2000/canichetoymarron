@@ -53,8 +53,7 @@ export class LoginPage implements OnInit {
         this.user.password= '';
         this.ngFireAuth.signOut();
       } else if (this.user.email !== '') {
-        this.database.collection("Motos").doc(this.user.email).update({estado: "disponible"});
-        this.router.navigate(['/tabs/map']);
+        this.router.navigate(['/tabs/pedidos']);
         this.user.email= '';
         this.user.password= '';
       }
