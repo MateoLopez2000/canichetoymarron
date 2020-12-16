@@ -19,6 +19,9 @@ export class AuthService {
 
   user = this.AFauth.currentUser;
 
+  public getSucursales() {
+    return this.db.collection("Sucursales").snapshotChanges();
+  }
   public cerrarSesion() {
     return this.AFauth.signOut();
   }

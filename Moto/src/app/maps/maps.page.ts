@@ -76,7 +76,6 @@ export class MapsPage implements OnInit {
 
         this.showClientLocation();
         this.loadMarkers();
-        this.addMarker(latLng);
 
         this.map.addListener("tilesloaded", () => {
           this.lat = this.map.center.lat();
@@ -140,8 +139,8 @@ export class MapsPage implements OnInit {
       sucursalesArray.forEach((sucursal: any) => {
         this.markers.push({
           position: {
-            lat: sucursal.position.lat,
-            lng: sucursal.position.lng,
+            lat: Number(sucursal.position.lat),
+            lng: Number(sucursal.position.lng),
           },
           name : sucursal.name,
           address : sucursal.address,
