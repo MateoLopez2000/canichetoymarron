@@ -135,7 +135,7 @@ export class MapsPage implements OnInit {
   }
   //Get locations of sucursales
   getSucursales() {
-    this.firestoreService.getSucursalesData("sucursales").subscribe((sucursalesArray) => {
+    this.firestoreService.getSucursalesData("Sucursales").subscribe((sucursalesArray) => {
       this.markers = [];
       sucursalesArray.forEach((sucursal: any) => {
         this.markers.push({
@@ -173,7 +173,7 @@ export class MapsPage implements OnInit {
   }
   
   listenNewOrder() {
-    this.database.collection("pedidos").valueChanges({ idField: 'pedidoId' })
+    this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
     .subscribe((pedidos: any) => {
       pedidos.forEach(pedido => {
         if(this.ocupado){
@@ -197,14 +197,14 @@ export class MapsPage implements OnInit {
           handler: () => {
             this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
             this.ocupado = true;
-            this.database.collection("pedidos").doc(idPedido).update({estado: "Listo para recoger", moto: ""});
+            this.database.collection("Pedidos").doc(idPedido).update({estado: "Listo para recoger", moto: ""});
             this.router.navigateByUrl('');
           }
         },
         {
           text: 'Aceptar',
           handler: () => {
-            this.database.collection("pedidos").doc(idPedido).update({estado: "En camino"});
+            this.database.collection("Pedidos").doc(idPedido).update({estado: "En camino"});
             this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
             this.router.navigateByUrl('/tabs/pedidos');
           }
@@ -214,7 +214,7 @@ export class MapsPage implements OnInit {
     await alert.present();
   }
   showClientLocation() {
-      this.database.collection("pedidos").valueChanges({ idField: 'pedidoId' })
+      this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
       .subscribe((pedidos: any) => {
         pedidos.forEach(pedido => {
           if (pedido.estado == "En camino" && pedido.moto == this.user) {

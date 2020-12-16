@@ -4,15 +4,13 @@
 
 export const environment = {
   production: false,
-  firebase: {
-    apiKey: "AIzaSyCPXUEKgV2ZYaO8pKGwJakoyNI9cS634ME",
-    authDomain: "caniche-toy-marron.firebaseapp.com",
-    databaseURL: "https://caniche-toy-marron.firebaseio.com",
-    projectId: "caniche-toy-marron",
-    storageBucket: "caniche-toy-marron.appspot.com",
-    messagingSenderId: "1045824974511",
-    appId: "1:1045824974511:web:91aad760264356412fee5a",
-    measurementId: "G-7MQ3NYFDTV"
+  firebase : {
+    apiKey: "AIzaSyCacd_W6y3SrLmA00M2Vpro7ZBVefrDDWM",
+    authDomain: "chachasdb.firebaseapp.com",
+    projectId: "chachasdb",
+    storageBucket: "chachasdb.appspot.com",
+    messagingSenderId: "602767901624",
+    appId: "1:602767901624:web:16c2aa0d258fce7c23854d"
   }
 };
 

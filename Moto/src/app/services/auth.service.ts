@@ -4,10 +4,7 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import { Router } from "@angular/router";
 import {
   AngularFirestore,
-  AngularFirestoreCollection,
 } from "@angular/fire/firestore";
-import { promise } from "protractor";
-import { resolve, reject } from "q";
 import * as firebase from "firebase";
 
 @Injectable({

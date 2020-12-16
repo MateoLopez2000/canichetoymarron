@@ -37,7 +37,7 @@ export class PedidosPage implements OnInit {
   }
   _getPedido() {
     this.getUser();
-    this.database.collection("pedidos").valueChanges({ idField: 'pedidoId' })
+    this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
       .subscribe((pedidos: any) => {
         pedidos.forEach(pedido => {
           if (pedido.estado == "En camino" && pedido.moto == this.user) {
@@ -48,7 +48,7 @@ export class PedidosPage implements OnInit {
   }
   entregado(idPedido) {
     this.showLogOutAlert()
-    this.database.collection("pedidos").doc(idPedido).update({estado: "Entregado"});
+    this.database.collection("Pedidos").doc(idPedido).update({estado: "Entregado"});
     this.miPedido = null;
   }
 
