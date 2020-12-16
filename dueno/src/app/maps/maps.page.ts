@@ -128,7 +128,8 @@ export class MapsPage implements OnInit {
           telefono : telf,
           horario : attention,
           imagen : this.urlImage
-    },uid);
+    });
+
     this.sucursal_name="";
     this.direction="";
     this.telf=null;
@@ -136,8 +137,8 @@ export class MapsPage implements OnInit {
     this.toHour=new Date().toTimeString;
   }
   
-  addLocation(sucursal : MarkerOptions, uid : any){
-    this.firestoreService.insertData('sucursales', uid, sucursal.position.lat, sucursal.position.lng, sucursal.nombre, sucursal.direccion, sucursal.telefono, sucursal.horario, sucursal.imagen);
+  addLocation(sucursal : MarkerOptions){
+    this.firestoreService.insertData('sucursales', sucursal.position.lat, sucursal.position.lng, sucursal.nombre, sucursal.direccion, sucursal.telefono, sucursal.horario, sucursal.imagen);
   }
 
   handleFileInput(files: FileList) {
