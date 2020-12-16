@@ -13,8 +13,8 @@ export class LoginPage implements OnInit {
   user= {
     email: '',
     password: ''
-  };
-
+  }
+  userFound = false;
   constructor(
     private router: Router,
     public ngFireAuth: AngularFireAuth,
@@ -32,11 +32,14 @@ export class LoginPage implements OnInit {
         this.firestoreService.getData("Administradores").subscribe((adminsArray) => {
           adminsArray.forEach((admin:any)=>{
             if (admin.Correo === this.user.email) {
-              this.router.navigate(['/tabs/sucursales']);
-            }else {
-              alert("you don't belong here")
+             this.userFound=true;
             }
-          })
+          });
+          if (this.userFound) {
+            this.router.navigate(['/tabs/sucursales']);
+          }else {
+            alert("you don't belong here")
+          }
         });
       },
       async error=> {
