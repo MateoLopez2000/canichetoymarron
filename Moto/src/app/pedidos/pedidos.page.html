@@ -7,16 +7,22 @@
 <ion-content>
   <ion-card *ngIf='miPedido; else sinPedido'>
     <ion-card-header>
-      <ion-card-title>{{ miPedido.pedidoId }}</ion-card-title>
+      <ion-card-title><b>{{ miPedido.pedido }}</b></ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <h2>Fecha y Hora: {{ miPedido.fechahorapedido }}</h2>
-      <h2>Productos: {{ miPedido.productos }}</h2>
-      <h2>Nombre: {{ miPedido.nombre }}</h2>
-      <h2>Nit: {{ miPedido.nit }}</h2>
-      <h2>Dirección: {{ miPedido.direccion }}</h2>
-      <h2>Teléfono: {{ miPedido.telefono }}</h2>
-      <h2>Sucursal: {{ miPedido.sucursal }}</h2>
+      <ion-card-subtitle><b>Fecha: </b>{{ miPedido.fechahorapedido.toDate().toLocaleDateString('en-GB') }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Hora: </b>{{ miPedido.fechahorapedido.toDate().toLocaleTimeString() }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Nombre: </b>{{ miPedido.nombre }}</ion-card-subtitle>
+      <ion-card-subtitle><b>NIT: </b>{{ miPedido.nit }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Dirección: </b>{{ miPedido.direccion }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Teléfono: </b>{{ miPedido.telefono }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Sucursal: </b>{{ miPedido.sucursal }}</ion-card-subtitle>
+      <ion-list>
+        <ion-card-subtitle><b>Productos: </b></ion-card-subtitle>
+        <ion-item *ngFor="let producto of miPedido.productos">
+          <ion-card-subtitle>{{producto.nombre}}</ion-card-subtitle>
+        </ion-item>
+      </ion-list>
     </ion-card-content>
 
     <div style="text-align: center;">

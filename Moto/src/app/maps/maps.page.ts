@@ -140,8 +140,8 @@ export class MapsPage implements OnInit {
       sucursalesArray.forEach((sucursal: any) => {
         this.markers.push({
           position: {
-            lat: sucursal.position.lat,
-            lng: sucursal.position.lng,
+            lat: Number(sucursal.position.lat),
+            lng: Number(sucursal.position.lng),
           },
           name : sucursal.name,
           address : sucursal.address,
