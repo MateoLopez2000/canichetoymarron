@@ -9,8 +9,8 @@ import { AngularFirestore } from "@angular/fire/firestore";
 export class FirestoreService {
   constructor(private angularFirestore: AngularFirestore) {}
   
-  public insertData(collection, id, latitud :number, longitud: number, nombre :string, direccion :string, telefono :number, horario :string, imagen :string){
-    this.angularFirestore.doc(collection+'/'+id).set({
+  public insertData(collection, latitud :number, longitud: number, nombre :string, direccion :string, telefono :number, horario :string, imagen :string){
+    this.angularFirestore.doc(collection+'/'+ this.angularFirestore.createId()).set({
         position: {
           lat: latitud,
           lng: longitud
