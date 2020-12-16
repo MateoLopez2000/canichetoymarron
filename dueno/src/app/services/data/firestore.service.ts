@@ -23,7 +23,7 @@ export class FirestoreService {
     });
   }
 
-  public insertMoto(collection, id, nombre, rol) {
+  public insertMoto(collection, id, nombre) {
     this.angularFirestore.doc(collection + '/' + id).set({ 
       position: {
         lat: 0,
@@ -31,14 +31,10 @@ export class FirestoreService {
       },
       nombreDeMoto: nombre,
       estado: "ocupado",
-      rol: rol,
       flogin: true,
     });
   }
 
-  public getRol(email) {
-    return this.angularFirestore.collection("Motos").doc(email).valueChanges();
-  }
   public insertPedido(id) {
     this.angularFirestore.doc("pedidos" + '/' + id).set({ 
       position: {
@@ -58,28 +54,21 @@ export class FirestoreService {
   }
   public getMotoById(id)  {
     return this.angularFirestore.collection("Motos").doc(id).valueChanges();
-  
   }
   public getData(collection) {
     return this.angularFirestore.collection(collection).valueChanges();
   }
-  public trackingUpdate(updateBool: string) {
-    this.angularFirestore.collection("tracking").doc("update").update({
-      actualizarBool: updateBool,
-    });
+  public getMotos() {
+    return this.angularFirestore.collection("Motos").snapshotChanges();
   }
   public getPedidos() {
     return this.angularFirestore.collection("pedidos").snapshotChanges();
   }
-  public deleteData(sucursal) {
-    return this.angularFirestore.doc("sucursales/" + sucursal).delete();
+  public getSucursales() {
+    return this.angularFirestore.collection("sucursales").snapshotChanges();
   }
-
   public updateData(collection, id, data) {
     return this.angularFirestore.collection(collection).doc(id).update(data);
-  }
-  public getMotos() {
-    return this.angularFirestore.collection("Motos").snapshotChanges();
   }
   public getEspecificMoto(collection, email) {
     return this.angularFirestore.collection(collection).doc(email).valueChanges();

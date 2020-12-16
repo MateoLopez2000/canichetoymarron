@@ -117,7 +117,6 @@ export class MapsPage implements OnInit {
     let telf = this.telf;
     let attention = this.fromHour + "-" + this.toHour;
     uid = name;
-
     this.addLocation(
       {
         position: {
@@ -130,7 +129,6 @@ export class MapsPage implements OnInit {
           horario : attention,
           imagen : this.urlImage
     },uid);
-
     this.sucursal_name="";
     this.direction="";
     this.telf=null;

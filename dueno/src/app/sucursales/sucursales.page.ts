@@ -123,19 +123,22 @@ export class SucursalesPage implements OnInit {
   }
 
   getLocations() {
-    this.firestoreService.getData("sucursales").subscribe((sucursalesArray) => {
+    this.firestoreService.getSucursales().subscribe((sucursalesArray) => {
       this.markers = [];
       sucursalesArray.forEach((sucursal: any) => {
+        let sucursalData = sucursal.payload.doc.data();
+        let sucursalID = sucursal.payload.doc.id;
         this.markers.push({
+          id: sucursalID,
           position: {
-            lat: sucursal.position.lat,
-            lng: sucursal.position.lng,
+            lat: sucursalData.position.lat,
+            lng: sucursalData.position.lng,
           },
-          name: sucursal.name,
-          address: sucursal.address,
-          telephone: sucursal.telephone,
-          attention: sucursal.attention,
-          imageURL: sucursal.imageURL
+          name: sucursalData.name,
+          address: sucursalData.address,
+          telephone: sucursalData.telephone,
+          attention: sucursalData.attention,
+          imageURL: sucursalData.imageURL
         });
       });
     });
@@ -222,7 +225,7 @@ export class SucursalesPage implements OnInit {
     let latSucursal;
     let lngSucursal;
     this.markers.forEach(sucursal => {
-      if (idsucursal === sucursal.name) {
+      if (idsucursal === sucursal.id) {
         latSucursal = sucursal.position.lat;
         lngSucursal = sucursal.position.lng;
       }

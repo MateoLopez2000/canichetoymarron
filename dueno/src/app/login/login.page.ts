@@ -29,12 +29,14 @@ export class LoginPage implements OnInit {
     await this.ngFireAuth.signInWithEmailAndPassword(this.user.email, this.user.password).
     then(
       ()=>{
-        this.firestoreService.getEspecificMoto("Motos", this.user.email).subscribe((moto: any) => {
-          if (moto.rol === "dueno") {
-            this.router.navigate(['/tabs/sucursales']);
-          }else {
-            alert("you don't belong here")
-          }
+        this.firestoreService.getData("Administradores").subscribe((adminsArray) => {
+          adminsArray.forEach((admin:any)=>{
+            if (admin.Correo === this.user.email) {
+              this.router.navigate(['/tabs/sucursales']);
+            }else {
+              alert("you don't belong here")
+            }
+          })
         });
       },
       async error=> {

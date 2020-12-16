@@ -15,7 +15,6 @@ export class RegisterPage implements OnInit {
     email: '',
     password: ''
   }
-  rol:string;
 
   constructor(
     private router: Router,
@@ -28,7 +27,6 @@ export class RegisterPage implements OnInit {
   }
 
   async register() {
-    console.log(this.rol);
     await this.ngFireAuth.createUserWithEmailAndPassword(this.user.email, this.user.password).
       then(
         () => {
@@ -47,7 +45,7 @@ export class RegisterPage implements OnInit {
         }
       )
     var split = this.user.email.split('@', 1);
-    this.firestoreService.insertMoto('Motos', this.user.email, split[0], this.rol);
+    this.firestoreService.insertMoto('Motos', this.user.email, split[0]);
     this.user.email = "";
     this.user.password = "";
   }
