@@ -69,13 +69,9 @@ export class PedidosPage implements OnInit {
           if (pedido.estado == "En camino" && pedido.moto == this.user) {
             this.miPedido = pedido;
             this.getSucursalName(pedido.sucursal);
-            this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
           }
         });
-        if(!this.miPedido){
-          this.database.collection("Motos").doc(this.user).update({estado: "disponible"});
-        }
-      })
+      });
   }
   getSucursalName(sucursalID){
     this.sucursales.forEach(sucursal => {

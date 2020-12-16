@@ -17,6 +17,8 @@ export class LoginPage implements OnInit {
     password: ''
   }
 
+  haveOrder = false;
+
   constructor(
     private router: Router,
     private database: AngularFirestore, 
@@ -26,6 +28,7 @@ export class LoginPage implements OnInit {
     ) { }
 
   ngOnInit() {
+    
   }
 
   async login() {
@@ -53,11 +56,28 @@ export class LoginPage implements OnInit {
         this.user.password= '';
         this.ngFireAuth.signOut();
       } else if (this.user.email !== '') {
+        this.checkIfHaveOrder();
         this.router.navigate(['/tabs/pedidos']);
-        this.user.email= '';
-        this.user.password= '';
       }
     });
+  }
+  checkIfHaveOrder() {
+    this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
+      .subscribe((pedidos: any) => {
+        pedidos.forEach(pedido => {
+          console.log(pedido.estado,pedido.moto);
+          if (pedido.estado == "En camino" && pedido.moto == this.user.email) {
+            console.log("hola");
+            this.database.collection("Motos").doc(this.user.email).update({estado: "ocupado"});
+            this.haveOrder = true;
+          }
+        });
+        if(!this.haveOrder){
+          this.database.collection("Motos").doc(this.user.email).update({estado: "disponible"});
+        }
+        this.user.email= '';
+        this.user.password= '';
+      });
   }
   async resetPassword() {
     this.router.navigate(['/password-recovery']);
