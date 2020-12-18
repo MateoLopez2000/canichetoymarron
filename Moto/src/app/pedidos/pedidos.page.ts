@@ -67,7 +67,6 @@ export class PedidosPage implements OnInit {
       console.log(sucursal +""+sucursalID);
       if(sucursal.id===sucursalID){
         this.sucursal=sucursal.name
-        
       }
     });
   }
