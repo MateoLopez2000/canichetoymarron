@@ -17,15 +17,16 @@ export class PedidosPage implements OnInit {
   user: any;
   sucursal: any;
   sucursales: any = [];
+  productos: any = [];
 
   constructor(
-    private database: AngularFirestore, 
+    private database: AngularFirestore,
     public ngFireAuth: AngularFireAuth,
     public gettersService: GettersService,
     private alertController: AlertController,
     public auth: AuthService,
     private router: Router
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.getSucursales();
@@ -56,43 +57,61 @@ export class PedidosPage implements OnInit {
         pedidos.forEach(pedido => {
           if (pedido.estado == "En camino" && pedido.moto == this.user) {
             this.miPedido = pedido;
+            console.log(pedido.productos);
+            this.getComidas(pedido.productos);
             this.getSucursalName(pedido.sucursal);
           }
         });
       });
   }
 
-  getSucursalName(sucursalID){
+  getComidas(productos) {
+    productos.forEach(producto => {
+      this.database.collection("Comida").valueChanges({ idField: 'pedidoId' })
+        .subscribe((pedidos: any) => {
+          pedidos.forEach(pedido => {
+            if (producto.id == pedido.pedidoId) {
+              if (this.productos.length < productos.length) {
+                this.productos.push({ cantidad: producto.cantidad, nombre: pedido.nombre });
+              }
+            }
+          });
+        });
+    });
+  }
+
+  getSucursalName(sucursalID) {
     this.sucursales.forEach(sucursal => {
-      console.log(sucursal +""+sucursalID);
-      if(sucursal.id===sucursalID){
-        this.sucursal=sucursal.name
+      //console.log(sucursal + "" + sucursalID);
+      if (sucursal.id === sucursalID) {
+        this.sucursal = sucursal.name
       }
     });
   }
 
   entregado(idPedido) {
     this.showLogOutAlert()
-    this.database.collection("Pedidos").doc(idPedido).update({estado: "Entregado"});
+    this.database.collection("Pedidos").doc(idPedido).update({ estado: "Entregado" });
     this.miPedido = null;
+    this.productos = [];
   }
 
   async showLogOutAlert() {
     const alert = await this.alertController.create({
       header: 'Pedido Entregado!',
       message: '¿Desea seguir recibiendo pedidos?',
-      buttons:  [
+      buttons: [
         {
           text: 'Cerrar Sesion',
           handler: () => {
-            this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
+            this.database.collection("Motos").doc(this.user).update({ estado: "ocupado" });
             this.router.navigateByUrl('')
           }
         },
         {
           text: 'Continuar Trabajando',
           handler: () => {
-            this.database.collection("Motos").doc(this.user).update({estado: "disponible"});
+            this.database.collection("Motos").doc(this.user).update({ estado: "disponible" });
             this.router.navigateByUrl('/tabs/map');
           }
         }
