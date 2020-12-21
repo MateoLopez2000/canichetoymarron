@@ -1,42 +1,43 @@
-import { environment } from './../../environments/environment.prod';
-import { Injectable } from '@angular/core';
-import {AngularFireAuth} from "@angular/fire/auth";
+import { environment } from "./../../environments/environment.prod";
+import { Injectable } from "@angular/core";
+import { AngularFireAuth } from "@angular/fire/auth";
 import { Router } from "@angular/router";
-import { AngularFirestore, AngularFirestoreCollection } from "@angular/fire/firestore";
-import { promise } from 'protractor';
-import { resolve, reject } from 'q';
-import * as firebase from 'firebase';
+import {
+  AngularFirestore,
+} from "@angular/fire/firestore";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthService {
-
-  constructor(private AFauth : AngularFireAuth,
+  constructor(
+    private AFauth: AngularFireAuth,
     private router: Router,
-    private db: AngularFirestore) { }
+    private db: AngularFirestore
+  ) {}
 
-     user = this.AFauth.currentUser;
+  user = this.AFauth.currentUser;
 
-    set_location(nombre:string, latitud:string,longitud:string)
-    { return new Promise((resolve, reject) => {
-      let uid = "KV30xDgmayGKyLN1T2Wm"; 
-      this.db.collection('lugares').doc(uid).set({
-            uid: uid,
-            nombre: nombre,
-            latitud: latitud,
-            longitud: longitud
-          });
-        })  
-    }
-    update_location(nombre:string, latitud:string,longitud:string)
-    { return new Promise((resolve, reject) => {
-      let uid = "KV30xDgmayGKyLN1T2Wm"; 
-      this.db.collection('lugares').doc(uid).update({
-            nombre: nombre,
-            latitud: latitud,
-            longitud: longitud
-          });
-        })  
-    }
+  public cerrarSesion() {
+    return this.AFauth.signOut();
   }
+  public update_location(nombre: string, latitud: string, longitud: string) {
+      this.db.collection("Motos").doc(nombre).update({
+        position: {
+          lat: latitud,
+          lng: longitud
+        },
+    });
+  }
+  public getData(collection) {
+    return this.db.collection(collection).snapshotChanges();
+  }
+  public getEspecificMoto(collection, email) {
+    return this.db.collection(collection).doc(email).valueChanges();
+  }
+  public updateEspecificlogin(collection, email) {
+    this.db.collection(collection).doc(email).update({
+      flogin: false,
+    });
+  }
+}

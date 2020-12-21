@@ -1,72 +1,224 @@
-import { Component, OnInit, NgZone, ElementRef, ViewChild } from '@angular/core';
-import { Geolocation, Geoposition } from '@ionic-native/geolocation/ngx';
-import { NavController } from '@ionic/angular';
-import { GoogleMaps, MarkerOptions } from '@ionic-native/google-maps';
-import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
-import * as firebase from 'firebase';
-import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
+import {Component,OnInit,NgZone,ViewChild} from "@angular/core";
+import { Geolocation} from "@ionic-native/geolocation/ngx";
+import { IonSlides,NavController, AlertController } from "@ionic/angular";
+import { MarkerOptions } from "@ionic-native/google-maps";
+import {AngularFirestore,} from "@angular/fire/firestore";
 import { AuthService } from "../services/auth.service";
+import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from "@angular/router";
+import { GettersService } from "../services/getters.service";
 
 declare var google;
 
 @Component({
-  selector: 'app-maps',
-  templateUrl: './maps.page.html',
-  styleUrls: ['./maps.page.scss'],
+  selector: "app-maps",
+  templateUrl: "./maps.page.html",
+  styleUrls: ["./maps.page.scss"],
 })
 export class MapsPage implements OnInit {
+  @ViewChild(IonSlides) slides: IonSlides;
   map: any;
   lat: string;
-  long: string;  
+  long: string;
   location: any;
+  user: any;
+  infoWindow: any;
+  markers: MarkerOptions[] = [];
+  infoWindows: any = [];
+  isTracking = false;
+  watch = null;
+  ocupado = false;
 
   constructor(
     private geolocation: Geolocation,
-    private zone: NgZone,
     public navCtrl: NavController,
-    private googleMaps: GoogleMaps,  
     private database: AngularFirestore,
-    private nativeGeocoder: NativeGeocoder,
-    public auth: AuthService
-  ) {
-   }  
-  
+    public auth: AuthService,
+    public ngFireAuth: AngularFireAuth,
+    public gettersService: GettersService,
+    private alertController: AlertController,
+    private router: Router
+  ) {}
+
   ngOnInit() {
-    this.loadMap(); 
-    this.onSubmit();   
+    this.getUser();
   }
-
-  loadMap() {
-    this.geolocation.getCurrentPosition().then((resp) => {
-      let latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
-      
-      let mapOptions = {
-        center: latLng,
-        zoom: 15,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-      } 
-  
-      this.map = new google.maps.Map(document.getElementById('map'), mapOptions); 
-      
-      this.map.addListener('tilesloaded', () => {
-        this.lat = this.map.center.lat()
-        this.long = this.map.center.lng()
-      }); 
-    }).catch((error) => {
-      console.log('Error getting location', error);
+  getUser() {
+    this.ngFireAuth.authState.subscribe(res => {
+      if (res && res.uid) {
+        this.user = res.email;
+        this.loadMap();
+        this.listenNewOrder();
+        this.startTracking();
+      } else {
+        this.router.navigateByUrl('');
+        console.log('user not logged in');
+      }
     });
-    // alert('latitud' +this.lat+', longitud'+this.long )
+  }
+  loadMap() {
+    this.geolocation
+      .getCurrentPosition()
+      .then((resp) => {
+        let latLng = new google.maps.LatLng(
+          resp.coords.latitude,
+          resp.coords.longitude
+        );
+        let mapOptions = {
+          center: latLng,
+          zoom: 15,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+        };
+
+        this.map = new google.maps.Map(
+          document.getElementById("map"),
+          mapOptions
+        );
+
+        this.showClientLocation();
+        this.loadMarkers();
+
+        this.map.addListener("tilesloaded", () => {
+          this.lat = this.map.center.lat();
+          this.long = this.map.center.lng();
+          this.loadMarkers();
+          this.addMarker(latLng);
+          this.showClientLocation();
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting location", error);
+      });
   }
 
-  onSubmit(){
-    this.geolocation.getCurrentPosition().then((geposition:Geoposition) =>{
-     let lat = geposition.coords.latitude.toString();
-     let long = geposition.coords.longitude.toString();
+  startTracking() {
+    this.isTracking = true;
+    this.watch = this.geolocation.watchPosition();
+    this.watch.subscribe((data)=>{
+      this.auth
+          .update_location(this.user, data.coords.latitude, data.coords.longitude)
+    })
+  }
 
-    // this.auth.register("UPB", this.lat, this.long).then(auth => {    
-    this.auth.set_location("UPB", "-17.398797064290626", "-66.21835613799746").then(auth => {
-      console.log(auth);
-    }).catch(err => console.log(err));
-  });
+  addMarker(location) {
+    const marker = new google.maps.Marker({
+      position: location,
+      map: this.map,
+      title: "You are here",
+      icon : "../assets/icon/repartidor.png"
+    });
+    this.markers.push(marker);
+  }
+ 
+  addSucursalMaker(itemMarker: MarkerOptions) {
+    const marker = new google.maps.Marker({
+      position: { lat: itemMarker.position.lat, lng: itemMarker.position.lng },
+      map: this.map,
+      title: itemMarker.name,
+      text: itemMarker.address,
+      img: itemMarker.image,
+      icon : "../assets/icon/tienda.png"
+    });
+    return marker;
+  }
+
+  loadMarkers() {
+    this.getSucursales();
+    this.markers.forEach((marker) => {
+      const markerObj = this.addSucursalMaker(marker);
+      marker.markerObj = markerObj;
+      this.addInfoWindowToMarker(markerObj);
+    });
+  }
+
+  async onSlideDidChange() {
+    const currentSlide = await this.slides.getActiveIndex();
+    const marker = this.markers[currentSlide];
+    this.map.panTo({ lat: marker.position.lat, lng: marker.position.lng });
+  }
+
+  getSucursales() {
+    this.auth.getData("Sucursales").subscribe((sucursalesArray) => {
+      this.markers = this.gettersService.loadSucursales(sucursalesArray);
+    });
+  }
+
+  addInfoWindowToMarker(marker) {
+    let infoWindowContent = "<b>" + marker.title + "</b><br/>" + marker.text;
+
+    let infoWindow = new google.maps.InfoWindow({
+      content: infoWindowContent,
+    });
+    marker.addListener("click", () => {
+      for (let window of this.infoWindows) {
+        window.close();
+      }
+      infoWindow.open(this.map, marker);
+    });
+    this.infoWindows.push(infoWindow);
+  }
+  
+  listenNewOrder() {
+    this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
+    .subscribe((pedidos: any) => {
+      pedidos.forEach(pedido => {
+        if(this.ocupado){
+          return
+        }
+        if(pedido.moto == this.user && pedido.estado == "Listo para recoger") {
+          this.showAlert(pedido.pedidoId, pedido.direccion);
+        }      
+      });
+    })
+  }
+
+  async showAlert(idPedido, direccionPedido) {
+    const alert = await this.alertController.create({
+      header: 'Nuevo pedido!',
+      subHeader: 'Direccion de entrega: '+direccionPedido,
+      message: '¿Desea aceptar el pedido?',
+      buttons:  [
+        {
+          text: 'Rechazar (Se cerrará tu sesión)',
+          handler: () => {
+            this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
+            this.ocupado = true;
+            this.database.collection("Pedidos").doc(idPedido).update({estado: "Listo para recoger", moto: ""});
+            this.router.navigateByUrl('');
+          }
+        },
+        {
+          text: 'Aceptar',
+          handler: () => {
+            this.database.collection("Pedidos").doc(idPedido).update({estado: "En camino"});
+            this.database.collection("Motos").doc(this.user).update({estado: "ocupado"});
+            this.router.navigateByUrl('/tabs/pedidos');
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  showClientLocation() {
+      this.database.collection("Pedidos").valueChanges({ idField: 'pedidoId' })
+      .subscribe((pedidos: any) => {
+        pedidos.forEach(pedido => {
+          if (pedido.estado == "En camino" && pedido.moto == this.user) {
+            const order = new google.maps.Marker({
+              position: { lat: Number(pedido.position.lat), lng: Number(pedido.position.lng) },
+              map: this.map,
+              icon : "../assets/icon/alfiler.png"
+              });
+          }
+        });
+      })
+   }
+
+   doRefresh(event) {
+    this.loadMap();
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000);
   }
 }

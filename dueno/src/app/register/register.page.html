@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Registrar Moto</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card id="logincard">
+    <ion-card-content>
+      <ion-item>
+        <ion-input [(ngModel)]="user.email" placeholder="youremail@gmail.com"></ion-input>
+      </ion-item>
+      <br>
+      <ion-item>
+        <ion-input [(ngModel)]="user.password" placeholder="Password" type="password"></ion-input>
+      </ion-item>
+      <br>
+      <div style="text-align: center; margin: auto">
+        <ion-button aria-expanded="block" (click)="register()">Register</ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

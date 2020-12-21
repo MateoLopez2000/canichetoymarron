@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { MapsPage } from './maps.page';
+//import { LoginPage } from '../login/login.page';
 
 @NgModule({
   imports: [

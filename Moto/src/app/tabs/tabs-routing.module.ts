@@ -5,25 +5,18 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
+      { 
+        path: 'map',
+        loadChildren: () =>import('../maps/maps.module').then(map=>map.MapsPageModule)
+      },
       {
-        path: 'maps',
-        children: [
-          {
-            path: '',
-            loadChildren: () =>
-              import('../maps/maps.module').then(map=>map.MapsPageModule)
-          }
-        ]
+        path: 'pedidos',
+        loadChildren: () => import('../pedidos/pedidos.module').then(pedido=>pedido.PedidosPageModule)
       }
     ]
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/maps',
-    pathMatch: 'full'
   }
 ];
 

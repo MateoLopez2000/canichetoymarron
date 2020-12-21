@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="titles">Pedido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content style="--background: #ecebea">
+  <ion-card *ngIf='miPedido; else sinPedido'>
+    <ion-card-header>
+      <ion-card-title><b>{{ miPedido.pedido }}</b></ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-card-subtitle><b>Fecha: </b>{{ miPedido.fechahorapedido.toDate().toLocaleDateString('en-GB') }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Hora: </b>{{ miPedido.fechahorapedido.toDate().toLocaleTimeString() }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Nombre: </b>{{ miPedido.nombre }}</ion-card-subtitle>
+      <ion-card-subtitle><b>NIT: </b>{{ miPedido.nit }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Dirección: </b>{{ miPedido.direccion }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Teléfono: </b>{{ miPedido.telefono }}</ion-card-subtitle>
+      <ion-card-subtitle><b>Sucursal: </b>{{ sucursal }}</ion-card-subtitle>
+      <ion-list>
+        <ion-card-subtitle><b>Productos: </b></ion-card-subtitle>
+        <ion-item *ngFor="let producto of productos">
+          <ion-card-subtitle>{{ producto.cantidad }} {{ producto.nombre }}</ion-card-subtitle>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+
+    <div style="text-align: center;">
+      <ion-button size="medium" style="width: 100%;" class="btn1" (click)="entregado(miPedido.pedidoId)">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>Entregado
+      </ion-button>     
+    </div>
+  </ion-card>
+  <ng-template #sinPedido><h4> No tienes asignado ningún pedido. </h4></ng-template>
+</ion-content>
